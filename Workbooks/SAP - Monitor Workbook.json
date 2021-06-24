@@ -1,0 +1,974 @@
+{
+  "version": "Notebook/1.0",
+  "items": [
+    {
+      "type": 11,
+      "content": {
+        "version": "LinkItem/1.0",
+        "style": "tabs",
+        "links": [
+          {
+            "id": "dfdb272b-163e-40b2-a9e0-79cb7209468a",
+            "cellValue": "workbook-param",
+            "linkTarget": "parameter",
+            "linkLabel": "Health Monitoring",
+            "subTarget": "general",
+            "preText": "General",
+            "style": "link"
+          },
+          {
+            "id": "b56a490a-7680-48c7-a50c-9404037f13f9",
+            "cellValue": "workbook-param",
+            "linkTarget": "parameter",
+            "linkLabel": "Events",
+            "subTarget": "alert",
+            "style": "link"
+          },
+          {
+            "id": "f32c10c4-5776-4dfd-8db0-6bc879e99f1c",
+            "cellValue": "workbook-param",
+            "linkTarget": "parameter",
+            "linkLabel": "Authentication & Authorization",
+            "subTarget": "events",
+            "style": "link"
+          },
+          {
+            "id": "76fa7104-87c5-474b-a687-9f9012e591dc",
+            "cellValue": "workbook-param",
+            "linkTarget": "parameter",
+            "linkLabel": "Alerts",
+            "subTarget": "alerts",
+            "style": "link"
+          }
+        ]
+      },
+      "name": "links"
+    },
+    {
+      "type": 9,
+      "content": {
+        "version": "KqlParameterItem/1.0",
+        "parameters": [
+          {
+            "id": "82aad988-7880-4b18-9fa5-2e7260ce3c2d",
+            "version": "KqlParameterItem/1.0",
+            "name": "TimeSelect",
+            "type": 4,
+            "typeSettings": {
+              "selectableValues": [
+                {
+                  "durationMs": 300000
+                },
+                {
+                  "durationMs": 900000
+                },
+                {
+                  "durationMs": 1800000
+                },
+                {
+                  "durationMs": 3600000
+                },
+                {
+                  "durationMs": 14400000
+                },
+                {
+                  "durationMs": 43200000
+                },
+                {
+                  "durationMs": 86400000
+                },
+                {
+                  "durationMs": 172800000
+                },
+                {
+                  "durationMs": 259200000
+                },
+                {
+                  "durationMs": 604800000
+                },
+                {
+                  "durationMs": 1209600000
+                },
+                {
+                  "durationMs": 2419200000
+                },
+                {
+                  "durationMs": 2592000000
+                },
+                {
+                  "durationMs": 5184000000
+                },
+                {
+                  "durationMs": 7776000000
+                }
+              ],
+              "allowCustom": true
+            },
+            "timeContext": {
+              "durationMs": 2592000000
+            },
+            "value": {
+              "durationMs": 7776000000
+            },
+            "label": "Time range"
+          },
+          {
+            "id": "47f7490d-edb3-4ad3-98fa-1cfd97c8782d",
+            "version": "KqlParameterItem/1.0",
+            "name": "Systems",
+            "label": "System",
+            "type": 2,
+            "isRequired": true,
+            "multiSelect": true,
+            "quote": "'",
+            "delimiter": ",",
+            "query": "ABAPAuditLog_CL | summarize  by  SystemID_s ",
+            "value": [
+              "value::all"
+            ],
+            "typeSettings": {
+              "additionalResourceOptions": [
+                "value::all"
+              ],
+              "selectAllValue": "*"
+            },
+            "timeContext": {
+              "durationMs": 7776000000
+            },
+            "timeContextFromParameter": "TimeSelect",
+            "queryType": 0,
+            "resourceType": "microsoft.operationalinsights/workspaces"
+          }
+        ],
+        "style": "above",
+        "queryType": 0,
+        "resourceType": "microsoft.operationalinsights/workspaces"
+      },
+      "name": "parameters - 8"
+    },
+    {
+      "type": 12,
+      "content": {
+        "version": "NotebookGroup/1.0",
+        "groupType": "editable",
+        "items": [
+          {
+            "type": 1,
+            "content": {
+              "json": "<tr><td><h1><B>Events Severity</b></h1>"
+            },
+            "conditionalVisibility": {
+              "parameterName": "workbook-param",
+              "comparison": "isEqualTo",
+              "value": "alert"
+            },
+            "name": "text - 0"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "//ABAPAuditLog_CL |  where (MessageID_s  =='AUD') and (SystemID_s in ({Systems}) or  '*' in ({Systems}))  | summarize count() by TimeGenerated,  MessageID_s,User_s, MessageText_s\r\ndatatable (Count:long, status:string, status_count:long) [0,\"Low\",1, 0,\"Medium\",2, 0,\"High\",3, ]\r\n|union\r\n(\r\nABAPAuditLog_CL\r\n| where TimeGenerated {TimeSelect}\r\n| where SystemID_s in ({Systems}) or  '*' in ({Systems}) \r\n| where AlertSeverityText_s <> ''\r\n//| summarize count() by AlertSeverityText_s\r\n| extend status = case(AlertSeverityText_s==\"High\", \"High\",\r\n                        AlertSeverityText_s==\"Medium\", \"Medium\",\r\n                        AlertSeverityText_s==\"Low\", \"Low\",\r\n                        \"True\")\r\n| where status != \"True\"\r\n| extend status_count = case(status==\"Critical\", 4, status==\"High\", 3, status==\"Medium\", 2, 1)\r\n| summarize Count = count() by status, status_count\r\n)\r\n| summarize Count=sum(Count) by status, status_count\r\n| sort by status_count asc\r\n",
+              "size": 4,
+              "title": "Event Severity ",
+              "exportFieldName": "status",
+              "exportParameterName": "status",
+              "exportDefaultValue": "Low",
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "visualization": "tiles",
+              "tileSettings": {
+                "titleContent": {
+                  "columnMatch": "status",
+                  "formatter": 18,
+                  "formatOptions": {
+                    "thresholdsOptions": "colors",
+                    "thresholdsGrid": [
+                      {
+                        "operator": "==",
+                        "thresholdValue": "Low",
+                        "representation": "green",
+                        "text": "{0}{1}"
+                      },
+                      {
+                        "operator": "==",
+                        "thresholdValue": "Medium",
+                        "representation": "orange",
+                        "text": "{0}{1}"
+                      },
+                      {
+                        "operator": "==",
+                        "thresholdValue": "High",
+                        "representation": "red",
+                        "text": "{0}{1}"
+                      },
+                      {
+                        "operator": "Default",
+                        "thresholdValue": null,
+                        "representation": "blue",
+                        "text": "{0}{1}"
+                      }
+                    ]
+                  }
+                },
+                "leftContent": {
+                  "columnMatch": "Count",
+                  "formatter": 12,
+                  "formatOptions": {
+                    "palette": "none"
+                  },
+                  "numberFormat": {
+                    "unit": 17,
+                    "options": {
+                      "style": "decimal",
+                      "maximumFractionDigits": 2,
+                      "maximumSignificantDigits": 3
+                    }
+                  }
+                },
+                "showBorder": true
+              }
+            },
+            "customWidth": "50",
+            "name": "query - 11"
+          },
+          {
+            "type": 9,
+            "content": {
+              "version": "KqlParameterItem/1.0",
+              "parameters": [
+                {
+                  "id": "a4df2a30-4ee5-4ad5-acb7-beded5abb787",
+                  "version": "KqlParameterItem/1.0",
+                  "name": "User",
+                  "type": 1,
+                  "value": "OR",
+                  "timeContext": {
+                    "durationMs": 86400000
+                  }
+                }
+              ],
+              "style": "pills",
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces"
+            },
+            "customWidth": "50",
+            "name": "parameters - 7",
+            "styleSettings": {
+              "margin": "50px",
+              "padding": "30px"
+            }
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "\r\nABAPAuditLog_CL \r\n| where TimeGenerated {TimeSelect}\r\n| where SystemID_s in ({Systems}) or  '*' in ({Systems}) \r\n| where AlertSeverityText_s <> ''\r\n| summarize count() by AlertSeverityText_s\r\n",
+              "size": 0,
+              "title": "Event Severity Pie",
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "visualization": "piechart",
+              "chartSettings": {
+                "createOtherGroup": null,
+                "seriesLabelSettings": [
+                  {
+                    "seriesName": "Low",
+                    "label": "Low",
+                    "color": "green"
+                  },
+                  {
+                    "seriesName": "Medium",
+                    "label": "Medium",
+                    "color": "orange"
+                  },
+                  {
+                    "seriesName": "High",
+                    "label": "High",
+                    "color": "redBright"
+                  }
+                ]
+              }
+            },
+            "customWidth": "40",
+            "name": "query - 12",
+            "styleSettings": {
+              "margin": "0",
+              "maxWidth": "100%"
+            }
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "ABAPAuditLog_CL \r\n| where TimeGenerated {TimeSelect}\r\n| where SystemID_s in ({Systems}) or  '*' in ({Systems}) \r\n| where AlertSeverityText_s <> ''\r\n| where AlertSeverityText_s=='{status}'\r\n| where User_s=='{User}'\r\n| project TimeGenerated, MessageID=MessageID_s, Severity=AlertSeverityText_s, Message=MessageText_s\r\n| order by TimeGenerated desc\r\n| take 100",
+              "size": 1,
+              "title": "All events with {status} severity by user {User}",
+              "noDataMessage": "Please select alert status",
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "visualization": "table",
+              "gridSettings": {
+                "formatters": [
+                  {
+                    "columnMatch": "Severity",
+                    "formatter": 18,
+                    "formatOptions": {
+                      "thresholdsOptions": "colors",
+                      "thresholdsGrid": [
+                        {
+                          "operator": "==",
+                          "thresholdValue": "High",
+                          "representation": "red",
+                          "text": "{0}{1}"
+                        },
+                        {
+                          "operator": "==",
+                          "thresholdValue": "Medium",
+                          "representation": "orange",
+                          "text": "{0}{1}"
+                        },
+                        {
+                          "operator": "==",
+                          "thresholdValue": "Low",
+                          "representation": "green",
+                          "text": "{0}{1}"
+                        },
+                        {
+                          "operator": "Default",
+                          "thresholdValue": null,
+                          "representation": "blue",
+                          "text": "{0}{1}"
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "columnMatch": "Tenant ID",
+                    "formatter": 1
+                  }
+                ]
+              }
+            },
+            "customWidth": "50",
+            "name": "query - 12",
+            "styleSettings": {
+              "margin": "0px",
+              "padding": "0px"
+            }
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "ABAPAuditLog_CL \r\n| where TimeGenerated {TimeSelect}\r\n| where SystemID_s in ({Systems}) or  '*' in ({Systems}) \r\n| where AlertSeverityText_s <> ''\r\n| summarize Alerts = count() by bin(TimeGenerated, 1d)\r\n\r\n",
+              "size": 0,
+              "aggregation": 3,
+              "title": "Events Over Time",
+              "color": "blueDark",
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "visualization": "linechart",
+              "chartSettings": {
+                "showDataPoints": true
+              }
+            },
+            "name": "query - 3"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "ABAPAuditLog_CL\r\n| where TimeGenerated {TimeSelect}\r\n| where (SystemID_s in ({Systems}) or  '*' in ({Systems})) \r\n| where AlertSeverityText_s != \"Low\"\r\n| summarize count() by bin(TimeGenerated, 1h), AlertSeverityText_s",
+              "size": 0,
+              "aggregation": 3,
+              "title": "Medium and High Severity Events by Severity Over Time",
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "visualization": "timechart",
+              "chartSettings": {
+                "seriesLabelSettings": [
+                  {
+                    "seriesName": "Low",
+                    "color": "green"
+                  },
+                  {
+                    "seriesName": "Medium",
+                    "color": "orange"
+                  },
+                  {
+                    "seriesName": "High",
+                    "color": "red"
+                  }
+                ]
+              }
+            },
+            "name": "query - 6"
+          }
+        ]
+      },
+      "conditionalVisibility": {
+        "parameterName": "workbook-param",
+        "comparison": "isEqualTo",
+        "value": "alert"
+      },
+      "name": "Alerts"
+    },
+    {
+      "type": 12,
+      "content": {
+        "version": "NotebookGroup/1.0",
+        "groupType": "editable",
+        "items": [
+          {
+            "type": 1,
+            "content": {
+              "json": "<tr><td><h1><B>Authentication & Authorization</b></h1>"
+            },
+            "name": "text - 4"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "ABAPAuditLog_CL \r\n| where TimeGenerated {TimeSelect}\r\n| where MessageID_s in('AU1','AU2','AUC') and (SystemID_s in ({Systems}) or  '*' in ({Systems})) \r\n| summarize  count() by bin(TimeGenerated,1d), MessageText_s",
+              "size": 0,
+              "showAnalytics": true,
+              "title": "Logins and Logouts Over Time",
+              "timeBrushParameterName": "BrushLogins",
+              "exportToExcelOptions": "all",
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "visualization": "barchart"
+            },
+            "customWidth": "100",
+            "name": "Logins and Logouts Over Time",
+            "styleSettings": {
+              "maxWidth": "100%"
+            }
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "ABAPAuditLog_CL \r\n| where TimeGenerated {TimeSelect}\r\n| where (SystemID_s in ({Systems}) or  '*' in ({Systems}))\r\n| project TimeGenerated, Severity=AlertSeverityText_s, SystemID_s, MessageText_s, Type\r\n| order by TimeGenerated desc\r\n| take 100",
+              "size": 0,
+              "title": "Login & Logouts - log view",
+              "showExportToExcel": true,
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "gridSettings": {
+                "formatters": [
+                  {
+                    "columnMatch": "Severity",
+                    "formatter": 18,
+                    "formatOptions": {
+                      "thresholdsOptions": "colors",
+                      "thresholdsGrid": [
+                        {
+                          "operator": "Default",
+                          "thresholdValue": null,
+                          "representation": "green",
+                          "text": "{0}{1}"
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "columnMatch": "AlertSeverityText_s",
+                    "formatter": 18,
+                    "formatOptions": {
+                      "thresholdsOptions": "colors",
+                      "thresholdsGrid": [
+                        {
+                          "operator": "Default",
+                          "thresholdValue": null,
+                          "representation": "green",
+                          "text": "{0}{1}"
+                        }
+                      ]
+                    }
+                  }
+                ]
+              }
+            },
+            "customWidth": "100",
+            "name": "Login & Logouts details"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "ABAPAuditLog_CL \r\n| where TimeGenerated {TimeSelect}\r\n| where (MessageID_s  =='AUE')  and (SystemID_s in ({Systems}) or  '*' in ({Systems})) \r\n| summarize count() by bin(TimeGenerated,1d), MessageText_s",
+              "size": 0,
+              "title": "Audit Configuration Changes",
+              "color": "orange",
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "visualization": "linechart",
+              "tileSettings": {
+                "showBorder": false,
+                "titleContent": {
+                  "columnMatch": "MessageText_s",
+                  "formatter": 1
+                },
+                "leftContent": {
+                  "columnMatch": "count_",
+                  "formatter": 12,
+                  "formatOptions": {
+                    "palette": "auto"
+                  },
+                  "numberFormat": {
+                    "unit": 17,
+                    "options": {
+                      "maximumSignificantDigits": 3,
+                      "maximumFractionDigits": 2
+                    }
+                  }
+                }
+              },
+              "chartSettings": {
+                "showDataPoints": true
+              }
+            },
+            "customWidth": "100",
+            "name": "Audit Configuration Changes"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "ABAPAuditLog_CL \r\n| where TimeGenerated {TimeSelect}\r\n| where (MessageID_s  =='AUD') or (MessageID_s == 'AUB') or (MessageID_s == 'AU7') or (MessageID_s == 'AUD8') and (SystemID_s in ({Systems}) or  '*' in ({Systems}))  | summarize count() by bin(TimeGenerated,1d),  MessageID_s,User_s, MessageText_s",
+              "size": 0,
+              "showAnalytics": true,
+              "title": "Suspicious user changes",
+              "showExportToExcel": true,
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "visualization": "barchart",
+              "graphSettings": {
+                "type": 0
+              },
+              "chartSettings": {
+                "seriesLabelSettings": [
+                  {
+                    "seriesName": "AU7",
+                    "label": "User Created"
+                  },
+                  {
+                    "seriesName": "AUD",
+                    "label": "User Master Record changed"
+                  },
+                  {
+                    "seriesName": "AUB",
+                    "label": "Authorizations Changed"
+                  },
+                  {
+                    "seriesName": "AU8",
+                    "label": "User Deleted"
+                  }
+                ]
+              },
+              "mapSettings": {
+                "locInfo": "LatLong",
+                "sizeSettings": "count_",
+                "sizeAggregation": "Sum",
+                "legendMetric": "count_",
+                "legendAggregation": "Sum",
+                "itemColorSettings": {
+                  "type": "heatmap",
+                  "colorAggregation": "Sum",
+                  "nodeColorField": "count_",
+                  "heatmapPalette": "greenRed"
+                }
+              }
+            },
+            "customWidth": "50",
+            "name": "Suspicious user changes",
+            "styleSettings": {
+              "maxWidth": "50%"
+            }
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "ABAPAuditLog_CL \r\n| where TimeGenerated {TimeSelect}\r\n| where (MessageID_s  =='AUD') or (MessageID_s == 'AUB') or (MessageID_s == 'AU7') or (MessageID_s == 'AUD8') and (SystemID_s in ({Systems}) or  '*' in ({Systems}))  | summarize count() by bin(TimeGenerated,1d),  MessageID_s,User_s, MessageText_s",
+              "size": 0,
+              "title": "Suspicious user changes table",
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "visualization": "table",
+              "gridSettings": {
+                "formatters": [
+                  {
+                    "columnMatch": "User_s",
+                    "formatter": 18,
+                    "formatOptions": {
+                      "thresholdsOptions": "icons",
+                      "thresholdsGrid": [
+                        {
+                          "operator": "Default",
+                          "thresholdValue": null,
+                          "representation": "info",
+                          "text": "{0}{1}"
+                        }
+                      ]
+                    }
+                  }
+                ]
+              }
+            },
+            "customWidth": "50",
+            "name": "query - 6"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "ABAPAuditLog_CL \r\n| where TimeGenerated {TimeSelect}\r\n| where  (MessageID_s  =='BU2') and (SystemID_s in ({Systems}) or  '*' in ({Systems}))\r\n| summarize Changes = count() by bin(TimeGenerated,1d)",
+              "size": 0,
+              "aggregation": 3,
+              "title": "Password Changes",
+              "color": "redBright",
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "visualization": "linechart"
+            },
+            "customWidth": "50",
+            "name": "Password Changes"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "ABAPAuditLog_CL \r\n| where TimeGenerated {TimeSelect}\r\n| where  (MessageID_s  =='BU2') and (SystemID_s in ({Systems}) or  '*' in ({Systems}))\r\n| project TenantId,TimeGenerated, MessageText_s, User_s",
+              "size": 0,
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces"
+            },
+            "customWidth": "50",
+            "name": "query - 7"
+          }
+        ]
+      },
+      "conditionalVisibility": {
+        "parameterName": "workbook-param",
+        "comparison": "isEqualTo",
+        "value": "events"
+      },
+      "name": "Events"
+    },
+    {
+      "type": 12,
+      "content": {
+        "version": "NotebookGroup/1.0",
+        "groupType": "editable",
+        "items": [
+          {
+            "type": 1,
+            "content": {
+              "json": "<tr><td><h1><B>Health Overview</b></h1>"
+            },
+            "name": "text - 1"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "ABAPAuditLog_CL\r\n| where TimeGenerated {TimeSelect}\r\n| where (SystemID_s in ({Systems}) or  '*' in ({Systems}))\r\n| summarize Number_Of_Users = dcount(User_s) by bin(TimeGenerated,1d)",
+              "size": 0,
+              "title": "Users login over time",
+              "color": "turquoise",
+              "timeContext": {
+                "durationMs": 0
+              },
+              "timeContextFromParameter": "TimeSelect",
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "visualization": "linechart",
+              "chartSettings": {
+                "showDataPoints": true
+              }
+            },
+            "name": "query - 2"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "ABAPAuditLog_CL \r\n| where TimeGenerated {TimeSelect}\r\n| where (SystemID_s in ({Systems}) or  '*' in ({Systems})) \r\n//| take 1\r\n| summarize count() by SystemID_s//, MessageClass_s, MessageID_s, Type\r\n//| summarize dcount(User_s) by bin(TimeGenerated,1d)",
+              "size": 0,
+              "title": "Number of events ingested by system",
+              "timeContext": {
+                "durationMs": 0
+              },
+              "timeContextFromParameter": "TimeSelect",
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "visualization": "piechart"
+            },
+            "name": "query - 3"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "ABAPAuditLog_CL \r\n| where TimeGenerated {TimeSelect}\r\n| where (SystemID_s in ({Systems}) or  '*' in ({Systems})) \r\n//| take 1\r\n| summarize count() by MessageClass_s//, MessageID_s, Type\r\n//| summarize dcount(User_s) by bin(TimeGenerated,1d)",
+              "size": 0,
+              "title": "Message class count",
+              "timeContext": {
+                "durationMs": 0
+              },
+              "timeContextFromParameter": "TimeSelect",
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "visualization": "barchart"
+            },
+            "name": "query - 5"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "ABAPAuditLog_CL \r\n| where TimeGenerated {TimeSelect}\r\n| where (SystemID_s in ({Systems}) or  '*' in ({Systems})) \r\n//| take 1\r\n| summarize count() by MessageID_s//, Type\r\n//| summarize dcount(User_s) by bin(TimeGenerated,1d)",
+              "size": 0,
+              "title": "Message IDs count",
+              "timeContext": {
+                "durationMs": 0
+              },
+              "timeContextFromParameter": "TimeSelect",
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "visualization": "barchart"
+            },
+            "name": "query - 5"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "ABAPAuditLog_CL\r\n| where TimeGenerated {TimeSelect}\r\n| where (SystemID_s in ({Systems}) or  '*' in ({Systems})) \r\n| where ABAPProgramName_s != \"SAPMSSY1\" and ABAPProgramName_s != \"\"\r\n| summarize count() by ABAPProgramName_s",
+              "size": 0,
+              "title": "ABAP programs executed",
+              "timeContext": {
+                "durationMs": 604800000
+              },
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "visualization": "piechart",
+              "chartSettings": {
+                "createOtherGroup": 12
+              }
+            },
+            "name": "query - 5"
+          }
+        ]
+      },
+      "conditionalVisibility": {
+        "parameterName": "workbook-param",
+        "comparison": "isEqualTo",
+        "value": "general"
+      },
+      "name": "group - 4"
+    },
+    {
+      "type": 12,
+      "content": {
+        "version": "NotebookGroup/1.0",
+        "groupType": "editable",
+        "items": [
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "// Define variables\r\n// Audit Log Classes - Dialog Logon Successful, RFC Logon Successful\r\nlet AuditClasses = dynamic(['AU1','AU5']);\r\n// Dialog / CPIC / RFC Int / RFC Ext / SRFC / User Switch / HTTP / Restore Session / API Call\r\nlet DialogLogonTypes = dynamic(['A', 'C', 'F', 'R', 'S', 'U', 'H', 'u', ' ']);\r\nlet excUsers = _GetWatchlist('SAP - Excluded Users'); // Users that should be removed from query\r\nlet fixedExcUsers = datatable(User:string)\r\n// Maintain these if WatchList is not available    \r\n    [\"SYSWF\"]\r\n; \r\nlet UnitedExcUsers =\r\ntoscalar(union excUsers, fixedExcUsers\r\n| summarize Users = make_set(User));\r\nlet IPThreshold = 1;\r\n// Query Logic\r\nABAPAuditLog_CL \r\n| where TimeGenerated {TimeSelect}\r\n| where (SystemID_s in ({Systems}) or  '*' in ({Systems})) \r\n| where MessageID_s in (AuditClasses)\r\n| where Variable1_s in (DialogLogonTypes)\r\n| where User_s !in (UnitedExcUsers)\r\n| summarize CountIP = dcount(TerminalIPv6_s), IPs = make_set(TerminalIPv6_s), StartTime = min(TimeGenerated), EndTime = max(TimeGenerated) by SystemID_s, ClientID_s, User_s, Email_s\r\n| where CountIP > IPThreshold // Count of IP logins from the user is higher than threshold\r\n| mv-expand IPs to typeof(string ) // Show for each IP\r\n| project SystemID_s, ClientID_s, User_s,\r\n    AccountCustomEntity = Email_s, IPCustomEntity = IPs, StartTime, EndTime\r\n| order by StartTime, EndTime desc",
+              "size": 0,
+              "title": "Multiple Logons by User",
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "gridSettings": {
+                "formatters": [
+                  {
+                    "columnMatch": "User_s",
+                    "formatter": 18,
+                    "formatOptions": {
+                      "thresholdsOptions": "icons",
+                      "thresholdsGrid": [
+                        {
+                          "operator": "Default",
+                          "thresholdValue": null,
+                          "representation": "warning",
+                          "text": "{0}{1}"
+                        }
+                      ]
+                    }
+                  }
+                ]
+              }
+            },
+            "name": "query - 1"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "// Define variables\r\nlet AuditClasses = dynamic(['AU1', 'AU5']); // Audit Log Classes - Dialog Logon Successful, RFC Logon Successful\r\nlet DialogLogonTypes = dynamic(['A', 'C', 'F', 'R', 'S', 'U', 'H', 'u', ' ']); // Dialog / CPIC / RFC Int / RFC Ext / SRFC / User Switch / HTTP / Restore Session / API Call\r\nlet excNetworks = _GetWatchlist('SAP - Excluded Networks'); // Networks that should be removed from query\r\nlet fixedNetworks =\r\ndatatable(Network:string)\r\n// Maintain these if WatchList is not available    \r\n    [\"111.68.128.0/1\", \"123.68.128.0/1\"]\r\n; \r\nlet UnitedNetworks =\r\ntoscalar(union excNetworks, fixedNetworks\r\n| summarize Networks = make_set(Network));\r\nlet UsersperIP = 1;\r\n// Query logic\r\nABAPAuditLog_CL \r\n| where TimeGenerated {TimeSelect}\r\n| where (SystemID_s in ({Systems}) or  '*' in ({Systems})) \r\n| where MessageID_s in (AuditClasses)\r\n| where Variable1_s in (DialogLogonTypes)\r\n| where TerminalIPv6_s !in (UnitedNetworks)\r\n| extend UserandEmail = pack(\"ID\", User_s, \"Email\", Email_s)\r\n| summarize CountUsers = dcount(strcat(User_s, \"_&_\", Email_s)), Users = make_set(UserandEmail), StartTime = min(TimeGenerated), EndTime = max(TimeGenerated) \r\n    by SystemID_s, ClientID_s, TerminalIPv6_s\r\n| where CountUsers > UsersperIP\r\n| mv-expand Users \r\n| evaluate bag_unpack(Users, \"User_\")\r\n| project SystemID_s, ClientID_s, column_ifexists(\"User_ID\", \"\"), AccountCustomEntity = column_ifexists(\"User_Email\", \"\"), IPCustomEntity = TerminalIPv6_s, StartTime, EndTime\r\n| order by StartTime, EndTime desc\r\n",
+              "size": 0,
+              "title": "Multiple Logons by IP",
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "visualization": "table",
+              "gridSettings": {
+                "formatters": [
+                  {
+                    "columnMatch": "IPCustomEntity",
+                    "formatter": 18,
+                    "formatOptions": {
+                      "thresholdsOptions": "icons",
+                      "thresholdsGrid": [
+                        {
+                          "operator": "Default",
+                          "thresholdValue": null,
+                          "representation": "warning",
+                          "text": "{0}{1}"
+                        }
+                      ]
+                    }
+                  }
+                ]
+              }
+            },
+            "name": "query - 6"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "// Define variables\r\n// Audit Log Classes - Failed Logons / Password Check\r\nlet AuditClasses = dynamic(['AUO', 'AU2', 'AU6', 'BU1']);\r\nlet perIPLimit = 6;\r\n// Query logic\r\nABAPAuditLog_CL \r\n| where TimeGenerated {TimeSelect}\r\n| where (SystemID_s in ({Systems}) or  '*' in ({Systems})) \r\n| where MessageID_s in (AuditClasses)\r\n| extend DetailsBy = pack(\"User\", User_s, \"Email\", Email_s, \"SystemID\", SystemID_s, \"ClientID\", ClientID_s)\r\n| summarize LoginbyIPAttempts = count(), Details = make_set(DetailsBy), StartTime = min(TimeGenerated), EndTime = max(TimeGenerated) \r\n    by TerminalIPv6_s\r\n// Check if number of login attempts per IP is higher than limit\r\n| where LoginbyIPAttempts > perIPLimit \r\n| mv-expand Details\r\n| evaluate bag_unpack(Details, \"Details_\")\r\n| project \r\n    StartTime, EndTime, IPCustomEntity = TerminalIPv6_s,\r\n    AccountCustomEntity = column_ifexists(\"Details_Email\", \"\"), column_ifexists(\"Details_User\", \"\"),\r\n    column_ifexists(\"Details_SystemID\", \"\"),\r\n    column_ifexists(\"Details_ClientID\", \"\")\r\n| summarize count() by Details_User",
+              "size": 0,
+              "title": "Brute force attacks by User",
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "visualization": "barchart",
+              "chartSettings": {
+                "xAxis": "Details_User",
+                "yAxis": [
+                  "count_"
+                ],
+                "ySettings": {
+                  "numberFormatSettings": {
+                    "unit": 17,
+                    "options": {
+                      "style": "decimal",
+                      "useGrouping": true
+                    }
+                  },
+                  "max": 100
+                }
+              }
+            },
+            "name": "query - 2"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "let AuditClasses = dynamic(['AU1','AU5']); // Audit Log Classes - Dialog Logon Successful, RFC Logon Successful\r\n// Dialog / CPIC / RFC Int / RFC Ext / SRFC / User Switch / HTTP / Restore Session / API Call\r\nlet DialogLogonTypes = dynamic(['A', 'C', 'F', 'R', 'S', 'U', 'H', 'u', ' ']);\r\nlet Networks = _GetWatchlist('SAP - Networks'); \r\nlet fixedNetworks = datatable(Network: string)['111.68.128.0/17']; // Maintain these if watchlist is not available\r\nlet allNetworks = union Networks, fixedNetworks\r\n    | summarize by Network;\r\nABAPAuditLog_CL\r\n// Add audit classes\r\n| where TimeGenerated {TimeSelect}\r\n| where (SystemID_s in ({Systems}) or  '*' in ({Systems})) \r\n| where MessageID_s in (AuditClasses)\r\n| where Variable1_s in (DialogLogonTypes) // Is a dialog logon type from the list\r\n| where isnotempty(TerminalIPv6_s) // There is a Ipv6 address\r\n| evaluate ipv4_lookup(allNetworks, TerminalIPv6_s, Network, return_unmatched = true)\r\n// Similar to regular lookup, by ipv4 address, unmatched is like left join\r\n| where isempty(Network) // Network is not familiar\r\n// Details\r\n| project TimeGenerated, SystemID_s, ClientID_s, User_s, TransactionCode_s, MessageText_s, AccountCustomEntity = Email_s, IPCustomEntity = TerminalIPv6_s, HostCustomEntity = Host_s\r\n| summarize count() by IPCustomEntity",
+              "size": 0,
+              "title": "Logins by unexpected networks",
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "visualization": "piechart"
+            },
+            "name": "query - 3"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "// Define Variables\r\nlet Role = 'Production';\r\nlet AuditClasses = dynamic(['AU3']); // Audit Log Classes - Transaction Started\r\nlet allSystemRoles = dynamic(['Sandbox','Developement','QualityAssurance','Training','Production']); // Available System Roles\r\nlet allSystemUsage = dynamic (['ERP','CRM','BW','Solman','Gateway','Enterprise Portal']); // Available System Usages\r\n// Get Relevant Systems from WatchList\r\nlet systemID = _GetWatchlist('SAP - Systems');\r\nlet fixedSID = datatable(SystemID:string, SystemRole:string, SystemUsage:string)\r\n// Maintain these if WatchList is not available    \r\n    [\"S4H\",\"Production\",\"ERP\",\r\n    \"XXX\",\"Sandbox\",\"BW\"]\r\n; \r\n// Get Relevant Transaction Codes\r\nlet SensitiveTcode = _GetWatchlist('SAP - Sensitive Transactions');\r\nlet fixedTcode = datatable(TransactionCode:string)\r\n// Maintain these if WatchList is not available    \r\n    [\"RSAU_CONFIG\",\"RZ11\",\"SM19\"]\r\n; \r\nlet UnitedCodes = \r\n    union SensitiveTcode, fixedTcode\r\n    | summarize by TransactionCode;\r\nlet UnitedSystem =\r\nunion systemID, fixedSID\r\n| summarize by SystemID, SystemRole, SystemUsage\r\n| where SystemRole == Role; // Recommended  is Production only\r\n//| where SystemRole in (allSystemRoles); // Use this for all system roles\r\n// Query logic\r\nABAPAuditLog_CL \r\n| where TimeGenerated {TimeSelect}\r\n| where (SystemID_s in ({Systems}) or  '*' in ({Systems})) \r\n| where MessageID_s in (AuditClasses)\r\n| where TransactionCode_s in (UnitedCodes)\r\n| project-rename SystemID = SystemID_s\r\n| lookup kind = inner (UnitedSystem) on SystemID\r\n| order by TimeGenerated asc\r\n| project TimeGenerated, SystemID, ClientID_s, User_s, TransactionCode_s, MessageText_s, MessageID_s, AccountCustomEntity = Email_s, IPCustomEntity = TerminalIPv6_s, HostCustomEntity = Host_s\r\n| summarize Number_Of_Transactions = count() by TransactionCode_s",
+              "size": 0,
+              "title": "Sensitive Transactions Executions",
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "visualization": "categoricalbar"
+            },
+            "name": "query - 4"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "// Define Variables\r\nlet Role = \"Production\";\r\nlet AuditClasses = dynamic(['AUW']); // Audit Log Classes - Report Started\r\nlet allSystemRoles = dynamic(['Sandbox','Developement','QualityAssurance','Training','Production']); // Available System Roles\r\nlet allSystemUsage = dynamic (['ERP','CRM','BW','Solman','Gateway','Enterprise Portal']); // Available System Usages\r\n// Get Relevant Systems from WatchList\r\nlet systemID = _GetWatchlist('SAP - Systems');\r\nlet fixedSID = datatable(SystemID:string, SystemRole:string, SystemUsage:string)\r\n// Maintain these if WatchList is not available    \r\n    [\"S4H\",\"Production\",\"ERP\",\r\n    \"XXX\",\"Sandbox\",\"BW\"]\r\n; \r\n// Get Relevant ABAP Programs\r\nlet SensitiveABAPReports = _GetWatchlist('SAP - Sensitive ABAP Programs');\r\nlet fixedABAPReports = datatable(ABAPProgram:string)\r\n// Maintain these if WatchList is not available    \r\n    [\"RSPFLDOC\"]\r\n; \r\nlet UnionAbap = \r\n    union SensitiveABAPReports, fixedABAPReports\r\n    | summarize by ABAPProgram;\r\nlet UnitedSystem =\r\nunion systemID, fixedSID\r\n| summarize by SystemID, SystemRole, SystemUsage\r\n| where SystemRole == Role; // Reccommended is Production only\r\n//| where SystemRole in (allSystemRoles); // Use this for all system roles\r\n// Query logic\r\nABAPAuditLog_CL \r\n| where TimeGenerated {TimeSelect}\r\n| where (SystemID_s in ({Systems}) or  '*' in ({Systems})) \r\n| where MessageID_s in (AuditClasses)\r\n| where ABAPProgramName_s in (UnionAbap)\r\n| project-rename SystemID = SystemID_s\r\n| lookup kind = inner (UnitedSystem) on SystemID\r\n| order by TimeGenerated asc\r\n| project TimeGenerated, SystemID, ClientID_s, User_s, ABAPProgramName_s, MessageText_s, TransactionCode_s, MessageID_s, AccountCustomEntity = Email_s, IPCustomEntity = TerminalIPv6_s, HostCustomEntity = Host_s\r\n| summarize Number_Of_Programs = count() by ABAPProgramName_s",
+              "size": 0,
+              "title": "Sensitive ABAP Programs Executions",
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "visualization": "categoricalbar"
+            },
+            "name": "query - 5"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "// Define Variables\r\nlet Roles = 'PFCG';\r\nlet UsersRoles = 'AGR_USERS';\r\nlet Insert = \"I\";\r\nlet logsThreshold = 10; // 10 seconds\r\n// Audit Log Classes - Authorizations for user changed\r\nlet AuditClasses = dynamic(['AUB', 'AUD']); // Authorizations for user &A changed.\r\n// Maintain these if WatchList is not available\r\nlet SensitiveRoles =  _GetWatchlist('SAP - Sensitive Roles');\r\nlet fixedRoles = datatable(Role: string)['SAP_BC_BASIS_ADMIN', 'SAP_BC_AUTH_PROFILE_ADMIN'];\r\n// Maintain these if System doesn't have CR's\r\nlet fixedChangeDocs = datatable(User_s : string, ObjectClass_s : string, TableName_s : string, TypeofChange_Item_s : string ,\r\nChangedTableKey_s : string, ObjectID_s : string, TimeGenerated : datetime, ValueNew_s : string, SystemID_s : string)[];\r\nlet ChangeDocs = \r\nunion isfuzzy=true table(\"ABAPChangeDocsLog_CL\"), fixedChangeDocs;\r\nlet ChangeCheck =\r\nChangeDocs  \r\n| where ObjectClass_s == Roles // Roles\r\n    and TableName_s == UsersRoles // Users Roles\r\n    and TypeofChange_Item_s == Insert // Insert \r\n| extend UserAssigned = extract(@\"^.{1,33}\\s*?(.{1,12})\\s*?\\d{16}\", 1, ChangedTableKey_s)\r\n| extend Role = ObjectID_s;\r\nlet UnitedRoles =\r\ntoscalar(union fixedRoles, SensitiveRoles\r\n| summarize Roles = make_list(Role));\r\n// Query logic\r\nABAPAuditLog_CL \r\n| where TimeGenerated {TimeSelect}\r\n| where (SystemID_s in ({Systems}) or  '*' in ({Systems})) \r\n| where MessageID_s in (AuditClasses)\r\n| summarize by TimeGenerated, TerminalIPv6_s, User_s, Host_s, Email_s\r\n| lookup kind = leftouter (ChangeCheck) on User_s\r\n| where Role in (UnitedRoles)\r\n| project-rename TimeGenAudit = TimeGenerated1\r\n| where abs(datetime_diff('second', TimeGenerated, TimeGenAudit)) <= logsThreshold\r\nor isnull(TimeGenAudit)\r\n| project \r\n    // Details\r\n    TimeGenerated, SystemID_s, ClientID_s, Role, User_s, UserAssigned",
+              "size": 1,
+              "title": "Sensitive Role Assignments",
+              "exportFieldName": "User_s",
+              "exportParameterName": "User",
+              "exportDefaultValue": "SAP",
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "visualization": "table",
+              "gridSettings": {
+                "formatters": [
+                  {
+                    "columnMatch": "Role",
+                    "formatter": 18,
+                    "formatOptions": {
+                      "thresholdsOptions": "icons",
+                      "thresholdsGrid": [
+                        {
+                          "operator": "Default",
+                          "thresholdValue": null,
+                          "representation": "warning",
+                          "text": "{0}{1}"
+                        }
+                      ]
+                    }
+                  }
+                ]
+              }
+            },
+            "name": "query - 6"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "ABAPAuditLog_CL \r\n| where TimeGenerated {TimeSelect}\r\n| where (SystemID_s in ({Systems}) or  '*' in ({Systems})) \r\n| where User_s=='{User}'\r\n| order by TimeGenerated desc\r\n| project TimeGenerated, SystemID_s, ClientID_s, MessageID_s ,MessageClass_s, MessageText_s\r\n| take 20",
+              "size": 1,
+              "title": "Current Activity of Suspicious User: {User}",
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces"
+            },
+            "name": "query - 7"
+          }
+        ]
+      },
+      "conditionalVisibility": {
+        "parameterName": "workbook-param",
+        "comparison": "isEqualTo",
+        "value": "alerts"
+      },
+      "name": "Alertss"
+    }
+  ],
+  "fallbackResourceIds": [
+    "/subscriptions/991af9ab-0e0d-4ebf-ab53-6c448bfecfff/resourcegroups/iprosis-s4h-12-05/providers/microsoft.operationalinsights/workspaces/or-log-analytics-workspace"
+  ],
+  "fromTemplateId": "sentinel-UserWorkbook",
+  "$schema": "https://github.com/Microsoft/Application-Insights-Workbooks/blob/master/schema/workbook.json"
+}

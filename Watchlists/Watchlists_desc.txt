@@ -1,0 +1,16 @@
+SAP - Systems:Describes the landscape of SAP systems according to role and usage.
+SAP - Privileged Users:Privileged users which are under extra restrictions.
+SAP - Sensitive Tables:Sensitive tables which their access should be governed.
+SAP - Sensitive Transactions:Sensitive transactions which their execution should be governed.
+SAP - Sensitive Roles:Sensitive roles which their assignment should be governed.
+SAP - Sensitive Profiles:Sensitive profiles which their assignment should be governed.
+SAP - Sensitive ABAP Programs:Sensitive ABAP programs (reports) which their execution should be governed.
+SAP - Critical Authorizations:Critical Authorizations object which their assignment should be governed.
+SAP - Networks:Internal and maintenance networks for identification of unauthorized logins.
+SAP - Sensitive Function Modules:Sensitive Function Modules which their execution should be governed.
+SAP - Excluded Networks:Internal and maintenance of excluded networks for ignoring web dispatchers, terminal servers etc.
+SAP - Excluded Users:System users which are logged in the systems need to be ignored. (for example Multiple logons by user alert)
+SAP - Obsolete Function Modules:Obsolete Function Modules which their execution should be governed.
+SAP - Obsolete Programs:Obsolete ABAP programs (reports) which their execution should be governed.
+SAP - Transactions for ABAP Generations:Transactions for ABAP generations which their execution should be governed.
+SAP - FTP Servers:FTP Servers for identification of unauthorized connections.

@@ -1,0 +1,121 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "metadata": {
+    "author": "Eli Forbes - v-eliforbes@microsoft.com",
+    "comments": "Solution template for SAP - System Applications and Products"
+  },
+  "parameters": {
+    "formattedTimeNow": {
+      "type": "string",
+      "defaultValue": "[utcNow('g')]",
+      "metadata": {
+        "description": "Appended to workbook displayNames to make them unique"
+      }
+    },
+    "location": {
+      "type": "string",
+      "minLength": 1,
+      "defaultValue": "[resourceGroup().location]",
+      "metadata": {
+        "description": "Not used, but needed to pass arm-ttk test `Location-Should-Not-Be-Hardcoded`.  We instead use the `workspace-location` which is derived from the LA workspace"
+      }
+    },
+    "workspace-location": {
+      "type": "string",
+      "minLength": 1,
+      "defaultValue": "[parameters('location')]",
+      "metadata": {
+        "description": "Region to deploy solution resources"
+      }
+    },
+    "workspace": {
+      "defaultValue": "<Enter Log Analytics Workspace>",
+      "type": "string",
+      "minLength": 1,
+      "metadata": {
+        "description": "Workspace name for Log Analytics where Sentinel is setup"
+      }
+    },
+    "connector1-name": {
+      "type": "string",
+      "defaultValue": "c1c299f0-3f46-4443-8541-d280b0708fd8"
+    }
+  },
+  "variables": {
+    "workbook-source": "[concat(resourceGroup().id, '/providers/Microsoft.OperationalInsights/workspaces/',parameters('workspace'))]",
+    "_workbook-source": "[variables('workbook-source')]",
+    "connector1-source": "[concat('/subscriptions/',subscription().subscriptionId,'/resourceGroups/',resourceGroup().name,'/providers/Microsoft.OperationalInsights/workspaces/',parameters('workspace'),'/providers/Microsoft.SecurityInsights/dataConnectors/',parameters('connector1-name'))]",
+    "_connector1-source": "[variables('connector1-source')]"
+  },
+  "resources": [
+    {
+      "id": "[variables('_connector1-source')]",
+      "name": "[concat(parameters('workspace'),'/Microsoft.SecurityInsights/',parameters('connector1-name'))]",
+      "apiVersion": "2021-03-01-preview",
+      "type": "Microsoft.OperationalInsights/workspaces/providers/dataConnectors",
+      "kind": "GenericUI",
+      "properties": {
+        "connectorUiConfig": {
+          "title": "Azure Sentinel Continuous Threat Monitoring for SAP",
+          "publisher": "Microsoft",
+          "descriptionMarkdown": "The Azure Sentinel SAP application layer Logs connector is integral part of Azure Sentinel Continuous Threat Monitoring for SAP Solution. The connector ingests SAP logs to Azure Sentinel workspaces, raw data can be accessed by both built-in Continuous Threat Monitoring Solution content as well as by custom, user created content. SAP logs ingestion leverages SAP NetWeaver (RFC) in order to ingest ABAP 7.4+ application layer logs including Security Audit logs, Application logs, ChangeDocuments, Spool Logs, Change Request data, Table Changes and more.",
+          "graphQueriesTableName": "ABAPAuditLog_CL",
+          "graphQueries": [
+            {
+              "metricName": "Total data received",
+              "legend": "AIVectraDetect",
+              "baseQuery": "ABAPAuditLog_CL | summarize Users_count=dcount(User_s) by bin(TimeGenerated,1d)"
+            }
+          ],
+          "sampleQueries": [
+            {
+              "description": "Total data received",
+              "query": "ABAPAuditLog_CL | summarize Users_count=dcount(User_s) by bin(TimeGenerated,1d)"
+            }
+          ],
+          "dataTypes": [
+            {
+              "name": "ABAPAuditLog_CL",
+              "lastDataReceivedQuery": "ABAPAuditLog_CL | summarize Time = max(TimeGenerated) | where isnotempty(Time)"
+            }
+          ],
+          "connectivityCriterias": [
+            {
+              "type": "IsConnectedQuery",
+              "value": [
+                "ABAPAuditLog_CL | summarize LastLogReceived = max(TimeGenerated) | project IsConnected = LastLogReceived > ago(30d)"
+              ]
+            }
+          ],
+          "availability": {
+            "status": 1,
+            "isPreview": true
+          },
+          "permissions": {
+            "customs": [
+              {
+                "name": "Documentation",
+                "description": "Complete [documentation](https://github.com/Azure/AzureSentinel4SAP) including on-premise coverage"
+              },
+              {
+                "name": "Infrastructure prerequisites",
+                "description": " \n1.    Azure Ubuntu Virtual Machine with system managed identity \n2.  Azure Key Vault with write-read access policy assigned to the virtual machine identity."
+              },
+              {
+                "name": "SAP basis prerequisites",
+                "description": "\n1.  SAP system 7.5 SP13 and above. Lower versions are supported with notes and/or limitations please refer to the [documentation](https://github.com/Azure/AzureSentinel4SAP). \n2.    SAP ABAP connector user and password \n3.  Apply [authorization profile](/github.com/Azure/AzureSentinel4SAP/blob/main/template/sample%20authorization%20profile.txt). Or use the [Sample Authorizations Role CR / Transport form](https://github.com/Azure/AzureSentinel4SAP/tree/main/CR) \n4.   Deploy the [ALL logs CR (single CR) on SAP (STMS)](https://github.com/Azure/AzureSentinel4SAP/tree/main/CR)"
+              }
+            ]
+          },
+          "instructionSteps": [
+            {
+              "title": "Installation\n"
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "outputs": {}
+}
