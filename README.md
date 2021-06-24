@@ -4,7 +4,7 @@ Create Azure Sentinel SAP Solution for marketplace based on alerts, workbooks an
 
 Inputs:
 1. Import alerts from azure sentinel workspace by subscription, resource group, workspace. (Script requests parameters while running)
-2. Watchlists should manually added to the Watchlists folder.
+2. Watchlists should manually added to the Watchlists folder. <br>
 Also need to maintain Watchlists_desc.txt with key-value for Watchlist name and Watchlist description.
 3. Workbooks should mannually added to the Workbooks folder.
 
