@@ -13,6 +13,6 @@ Outputs:
 2. In Main folder: sap1.2.20.zip (Solution file for marketplace)
 
 Instructions:
-1. Run pip install -r requirements.txt to install relevant packages.
-2. Run python create_solution.py
+1. Run "pip install -r requirements.txt" to install relevant packages.
+2. Run "python create_solution.py".
 
