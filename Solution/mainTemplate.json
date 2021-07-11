@@ -449,14 +449,6 @@
                 "description": "Unique id for the scheduled alert rule"
             }
         },
-        "analytic50-id": {
-            "type": "string",
-            "defaultValue": "[newGuid()]",
-            "minLength": 1,
-            "metadata": {
-                "description": "Unique id for the scheduled alert rule"
-            }
-        },
         "watchlist1-id": {
             "type": "string",
             "defaultValue": "[newGuid()]",
@@ -1630,7 +1622,7 @@
                 "description": "Identifies execution of RFC using dynamic destinations. Source Action: Execute an ABAP report which is using dynamic destinations (cl_dynamic_destination). Sample report: DEMO_RFC_DYNAMIC_DEST. *Data Sources: SAPcon - Audit Log*",
                 "displayName": "(Preview) SAP - Low - Dynamic RFC Destination",
                 "enabled": false,
-                "query": "// Define variables\r\nlet AuditClasses = dynamic(['FU1']); // Message of dynamic RFC execution using dynamic destination\r\n// Query logic\r\nABAPAuditLog_CL\r\n| where MessageID_s in (AuditClasses)\r\n| project TimeGenerated, SystemID_s, ClientID_s, AccountCustomEntity = Email_s, IPCustomEntity = TerminalIPv6_s, HostCustomEntity = Host_s, ABAPProgramName_s",
+                "query": "// Define variables\r\nlet AuditClasses = dynamic(['FU1']); // Message of dynamic RFC execution using dynamic destination\r\n// Query logic\r\nABAPAuditLog_CL\r\n| where MessageID_s in (AuditClasses)\r\n| parse Variable3_s with \"id=\" Created_RFC_Name\r\n| project TimeGenerated, SystemID_s, ClientID_s, User_s, AccountCustomEntity = Email_s, IPCustomEntity = TerminalIPv6_s, HostCustomEntity = Host_s, ABAPProgramName_s, ExecutedProgram = Variable2_s, Created_RFC_Name",
                 "queryFrequency": "PT6H",
                 "queryPeriod": "PT6H",
                 "severity": "Low",
@@ -1678,7 +1670,7 @@
                 "description": "Identifies changes in sensitive roles. \nSource Action: Change a role using PFCG.\nSensitive roles should be maintained in \"SAP - Sensitive Roles\" Watchlist\n\n*Data Sources: SAPcon - Change Documents Log*",
                 "displayName": "(Preview) SAP - Medium - Sensitive Roles Changes",
                 "enabled": false,
-                "query": "// Define variables\r\nlet RoleObjectClass = \"PFCG\";\r\nlet AuditLogIn = dynamic(['AU1', 'AU5']); // Messages of connect with user\r\nlet SensitiveRoles = _GetWatchlist(\"SAP - Sensitive Roles\");\r\n// Maintain if watchlist is not available\r\nlet fixedRoles = datatable(Role: string)['SAP_BC_BASIS_ADMIN', 'SAP_BC_AUTH_PROFILE_ADMIN'];\r\nlet UnitedRoles =\r\ntoscalar(union fixedRoles, SensitiveRoles\r\n| summarize Roles = make_list(Role));\r\n// Query logic\r\nlet LastLogin = \r\nABAPAuditLog_CL\r\n| where MessageID_s in (AuditLogIn)\r\n| summarize TimeGenerated = arg_max(TimeGenerated, *) by SystemID_s, ClientID_s, User_s; // Get last connection date for user\r\nABAPChangeDocsLog_CL\r\n| where ObjectClass_s == RoleObjectClass // Relevnt role object class\r\n| where ObjectID_s in (UnitedRoles) // Role is sensitive\r\n| lookup kind=inner LastLogin on User_s // Get IP\r\n| project TimeGenerated, SystemID_s, ClientID_s, AccountCustomEntity = Email_s, IPCustomEntity = TerminalIPv6_s, HostCustomEntity = Host_s, Role = ObjectID_s, TableName_s ,ChangedTableKey_s, FieldName_s ,OldValue = ValueOld_s, NewValue = ValueNew_s",
+                "query": "// Define variables\r\nlet RoleObjectClass = \"PFCG\";\r\nlet ChangeType = \"U\";\r\nlet AuditLogIn = dynamic(['AU1', 'AU5']); // Messages of connect with user\r\nlet SensitiveRoles = _GetWatchlist(\"SAP - Sensitive Roles\");\r\n// Maintain if watchlist is not available\r\nlet fixedRoles = datatable(Role: string)['SAP_BC_BASIS_ADMIN', 'SAP_BC_AUTH_PROFILE_ADMIN'];\r\nlet UnitedRoles =\r\ntoscalar(union fixedRoles, SensitiveRoles\r\n| summarize Roles = make_list(Role));\r\n// Query logic\r\nlet LastLogin = \r\nABAPAuditLog_CL\r\n| where MessageID_s in (AuditLogIn)\r\n| summarize TimeGenerated = arg_max(TimeGenerated, *) by SystemID_s, ClientID_s, User_s; // Get last connection date for user\r\nABAPChangeDocsLog_CL\r\n| where ObjectClass_s == RoleObjectClass // Relevant role object class\r\n| where ObjectID_s in (UnitedRoles) // Role is sensitive\r\n| where TypeofChange_Item_s == ChangeType\r\n| extend AuthorizationObj = extract(@\"\\S+\\s+(\\S+)\\s+\", 1, ChangedTableKey_s, typeof(string)) // Extract Authorization Object\r\n| extend Authorization = extract(@\"\\S+\\s+\\S+\\s+(\\S+\\d+)\", 1, ChangedTableKey_s, typeof(string)) // Extract Authorization\r\n| lookup kind=inner LastLogin on User_s // Get IP\r\n| project TimeGenerated, SystemID_s, ClientID_s, AccountCustomEntity = Email_s, IPCustomEntity = TerminalIPv6_s, HostCustomEntity = Host_s, Role = ObjectID_s, FieldName_s , AuthorizationObj, Authorization, OldValue = ValueOld_s, NewValue = ValueNew_s",
                 "queryFrequency": "PT12H",
                 "queryPeriod": "PT12H",
                 "severity": "Medium",
@@ -1724,52 +1716,7 @@
             "kind": "Scheduled",
             "location": "[parameters('workspace-location')]",
             "properties": {
-                "description": "Identifies SAP Notes implementation in the system.\n\nSource Action: Implement SAP Note using SNOTE/TCI.\n\n*Data Sources: SAPcon -  Change Requests*",
-                "displayName": "(Preview) SAP - Informational - Lifecycle - SAP Notes were implemented in system",
-                "enabled": false,
-                "query": "// Define variables\r\nlet VarNote = \"NOTE\";\r\nlet AuditLogIn = dynamic(['AU1', 'AU5']); // Messages of connect with user\r\n// Query logic\r\nlet LastLogin = \r\nABAPAuditLog_CL\r\n| where MessageID_s in (AuditLogIn)\r\n| summarize TimeGenerated = arg_max(TimeGenerated, *) by SystemID_s, ClientID_s, User_s; // Get last connection date for user\r\nABAPCRLog_CL \r\n| where ObjectType_s == VarNote // Type is NOTE\r\n| lookup kind=inner LastLogin on $left.Owner_s == $right.User_s // Get last login details\r\n| summarize by TimeGenerated, SystemID_s, SystemNumber_s, ClientID_s, Owner_s, Request_s, Description_s, ObjectName_s, Category, Status_s, AccountCustomEntity = Email_s, IPCustomEntity = TerminalIPv6_s, HostCustomEntity = Host_s",
-                "queryFrequency": "PT0H",
-                "queryPeriod": "PT0H",
-                "severity": "Informational",
-                "suppressionDuration": "PT1H",
-                "suppressionEnabled": false,
-                "triggerOperator": "GreaterThan",
-                "triggerThreshold": 0
-            }
-        },
-        {
-            "type": "Microsoft.OperationalInsights/workspaces/providers/alertRules",
-            "name": "[concat(parameters('workspace'),'/Microsoft.SecurityInsights/',parameters('analytic45-id'))]",
-            "apiVersion": "2020-01-01",
-            "kind": "Scheduled",
-            "location": "[parameters('workspace-location')]",
-            "properties": {
-                "description": "Identifies changes in sensitive profiles. \n\nSource Action: Change the profile's role using PFCG.\n\nSensitive profiles should be maintained in \"SAP - Sensitive Profiles\" Watchlist\n\n*Data Sources: SAPcon -  Change Documents Log*",
-                "displayName": "(Preview) SAP - Medium - Sensitive Profile Changes",
-                "enabled": false,
-                "query": "// Define variables\r\nlet ProfileChangeDoc = \"SUSR_PROF\";\r\nlet Tables = dynamic ([\"USR12\", \"SUSR_UST12\"]); // Relevant tables\r\nlet AuditLogIn = dynamic(['AU1', 'AU5']); // Messages of connect with user\r\nlet SensitiveProfiles = _GetWatchlist(\"SAP - Sensitive Profiles\");\r\n// Maintain if watchlist is not available\r\nlet fixedProfile = datatable(Profile:string)['SAP_ALL','SAP_NEW'];\r\nlet UnitedProfiles =\r\ntoscalar(union fixedProfile, SensitiveProfiles\r\n| summarize Profiles = make_list(Profile));\r\n// Query logic\r\nlet LastLogin = \r\nABAPAuditLog_CL\r\n| where MessageID_s in (AuditLogIn)\r\n| summarize TimeGenerated = arg_max(TimeGenerated, *) by SystemID_s, ClientID_s, User_s; // Get last connection date for user\r\nABAPChangeDocsLog_CL\r\n| where ObjectClass_s == ProfileChangeDoc\r\n| where  TableName_s in (Tables)\r\n| extend Profile = ObjectID_s\r\n| where Profile in (UnitedProfiles) // Profile is sensitive\r\n| lookup kind=inner LastLogin on User_s // Get IP\r\n| summarize by TimeGenerated, SystemID_s, ClientID_s, Profile, User_s, AccountCustomEntity = Email_s, IPCustomEntity = TerminalIPv6_s, HostCustomEntity = Host_s\r\n",
-                "queryFrequency": "PT12H",
-                "queryPeriod": "PT12H",
-                "severity": "Medium",
-                "suppressionDuration": "PT1H",
-                "suppressionEnabled": false,
-                "triggerOperator": "GreaterThan",
-                "triggerThreshold": 0,
-                "tactics": [
-                    "PrivilegeEscalation",
-                    "Persistence",
-                    "CommandAndControl"
-                ]
-            }
-        },
-        {
-            "type": "Microsoft.OperationalInsights/workspaces/providers/alertRules",
-            "name": "[concat(parameters('workspace'),'/Microsoft.SecurityInsights/',parameters('analytic46-id'))]",
-            "apiVersion": "2020-01-01",
-            "kind": "Scheduled",
-            "location": "[parameters('workspace-location')]",
-            "properties": {
-                "description": "Identifies execution of an obsolete/insecure ABAP program.\n\nSource Action: Execute a program directly using SE38/SA38/SE80 or by using a background job.\n\n**Recommended for Production only**\n\nObsolete programs should be maintained in \"SAP - Obsolete Programs\" Watchlist\n\n*Data Sources: SAPcon -  Audit Log*",
+                "description": "Identifies execution of an obsolete/insecure ABAP Function Module.\n\nSource Action: Execute an obsolete/insecure function module directly using SE37.\n\n**Recommended for Production only**\n\nObsolete functions should be maintained in \"SAP - Obsolete Function Modules\" Watchlist.\nTable logging changes should be activated for table \"EUFUNC\" in backend. (SE13)\n\n*Data Sources: SAPcon -  Table Data Log*",
                 "displayName": "(Preview) SAP - Medium - Execution of Obsolete or Insecure Function Module",
                 "enabled": false,
                 "query": "// Define variables\r\nlet RelTable = \"EUFUNC\"; // Relevant table\r\nlet AuditLogIn = dynamic(['AU1', 'AU5']); // Messages of connect with user\r\nlet ObsoleteModules =  _GetWatchlist('SAP - Obsolete Function Modules');\r\n// Maintain if watchlist is not available\r\nlet fixedModules = datatable(FunctionModule:string)['TH_SAPREL','TH_SAPREL2', 'TH_SAPREL3','SUSR_RFC_USER_INTERFACE','RFC_ABAP_INSTALL_AND_RUN']; \r\nlet UnitedModules =\r\ntoscalar(union fixedModules, ObsoleteModules\r\n| summarize FunctionModules =  make_set(FunctionModule));\r\n// Query logic\r\nlet LastLogin = \r\nABAPAuditLog_CL\r\n| where MessageID_s in (AuditLogIn)\r\n| summarize TimeGenerated = arg_max(TimeGenerated, *) by SystemID_s, ClientID_s, User_s; // Get last connection date for user\r\nABAPTableDataLog_CL\r\n| where TableName_s == RelTable\r\n| extend Module = extract(@\"\\s+(.{1,}\\b)\\s+\", 1, LogKey_s, typeof(string)) // Extract Function Module\r\n| extend FunctionGroup = extract(@\"^FL([^\\s]*)\\s\", 1, LogKey_s, typeof(string)) // Extract Function Group\r\n| extend ExecutionVariant = extract(@\"\\b(\\w+)$\", 1, LogKey_s, typeof(string)) // Extract Execution Varient\r\n| where Module in (UnitedModules) // Module is obsolete\r\n| lookup kind=inner LastLogin on $left.UserName_s == $right.User_s\r\n| project TimeGenerated, SystemID_s, ClientID_s,  AccountCustomEntity = Email_s, IPCustomEntity = TerminalIPv6_s, HostCustomEntity = Host_s, Module, FunctionGroup, ExecutionVariant",
@@ -1788,12 +1735,12 @@
         },
         {
             "type": "Microsoft.OperationalInsights/workspaces/providers/alertRules",
-            "name": "[concat(parameters('workspace'),'/Microsoft.SecurityInsights/',parameters('analytic47-id'))]",
+            "name": "[concat(parameters('workspace'),'/Microsoft.SecurityInsights/',parameters('analytic45-id'))]",
             "apiVersion": "2020-01-01",
             "kind": "Scheduled",
             "location": "[parameters('workspace-location')]",
             "properties": {
-                "description": "Identifies execution of an obsolete/insecure ABAP Function Module.\n\nSource Action: Execute an obsolete/insecure function module directly using SE37.\n\n**Recommended for Production only**\n\nObsolete functions should be maintained in \"SAP - Obsolete Function Modules\" Watchlist.\nTable logging changes should be activated for table \"EUFUNC\" in backend. (SE13)\n\n*Data Sources: SAPcon -  Table Data Log*",
+                "description": "Identifies execution of a sensitive ABAP Function Module.\n\nSource Action: Execute a sensitive function module directly using SE37.\n\n**Recommended for Production only**\n\nSensitive functions should be maintained in \"SAP - Sensitive Function Modules\" Watchlist.\nTable logging changes should be activated for table \"EUFUNC\" in backend. (SE13)\n\n*Data Sources: SAPcon -  Table Data Log*",
                 "displayName": "(Preview) SAP - High - Execution of Sensitive Function Module",
                 "enabled": false,
                 "query": "// Define variables\r\nlet RelTable = \"EUFUNC\"; // Relevant table\r\nlet AuditLogIn = dynamic(['AU1', 'AU5']); // Messages of connect with user\r\nlet SenseModules =  _GetWatchlist('SAP - Sensitive Function Modules');\r\nlet fixedModules = datatable(FunctionModule:string)['RSAU_CLEAR_AUDIT_LOG','BAPI_USER_CREATE', 'RFC_GET_TABLE_ENTRIES']; \r\nlet UnitedModules =\r\ntoscalar(union fixedModules, SenseModules\r\n| summarize FunctionModules =  make_set(FunctionModule));\r\n// Query logic\r\nlet LastLogin = \r\nABAPAuditLog_CL\r\n| where MessageID_s in (AuditLogIn)\r\n| summarize TimeGenerated = arg_max(TimeGenerated, *) by SystemID_s, ClientID_s, User_s; // Get last connection date for user\r\nABAPTableDataLog_CL\r\n| where TableName_s == RelTable \r\n| extend Module = extract(@\"\\s+(.{1,}\\b)\\s+\", 1, LogKey_s, typeof(string)) // Extract Function Module\r\n| extend FunctionGroup = extract(@\"^FL([^\\s]*)\\s\", 1, LogKey_s, typeof(string)) // Extract Function Group\r\n| extend ExecutionVariant = extract(@\"\\b(\\w+)$\", 1, LogKey_s, typeof(string)) // Extract Execution Varient\r\n| where Module in (UnitedModules) // Module is sensitive\r\n| lookup kind=inner LastLogin on $left.UserName_s == $right.User_s\r\n| project TimeGenerated, SystemID_s, ClientID_s,  AccountCustomEntity = Email_s, IPCustomEntity = TerminalIPv6_s, HostCustomEntity = Host_s, Module, FunctionGroup, ExecutionVariant",
@@ -1812,7 +1759,7 @@
         },
         {
             "type": "Microsoft.OperationalInsights/workspaces/providers/alertRules",
-            "name": "[concat(parameters('workspace'),'/Microsoft.SecurityInsights/',parameters('analytic48-id'))]",
+            "name": "[concat(parameters('workspace'),'/Microsoft.SecurityInsights/',parameters('analytic46-id'))]",
             "apiVersion": "2020-01-01",
             "kind": "Scheduled",
             "location": "[parameters('workspace-location')]",
@@ -1837,7 +1784,7 @@
         },
         {
             "type": "Microsoft.OperationalInsights/workspaces/providers/alertRules",
-            "name": "[concat(parameters('workspace'),'/Microsoft.SecurityInsights/',parameters('analytic49-id'))]",
+            "name": "[concat(parameters('workspace'),'/Microsoft.SecurityInsights/',parameters('analytic47-id'))]",
             "apiVersion": "2020-01-01",
             "kind": "Scheduled",
             "location": "[parameters('workspace-location')]",
@@ -1862,7 +1809,7 @@
         },
         {
             "type": "Microsoft.OperationalInsights/workspaces/providers/alertRules",
-            "name": "[concat(parameters('workspace'),'/Microsoft.SecurityInsights/',parameters('analytic50-id'))]",
+            "name": "[concat(parameters('workspace'),'/Microsoft.SecurityInsights/',parameters('analytic48-id'))]",
             "apiVersion": "2020-01-01",
             "kind": "Scheduled",
             "location": "[parameters('workspace-location')]",
@@ -1883,6 +1830,26 @@
                     "LateralMovement",
                     "CommandAndControl"
                 ]
+            }
+        },
+        {
+            "type": "Microsoft.OperationalInsights/workspaces/providers/alertRules",
+            "name": "[concat(parameters('workspace'),'/Microsoft.SecurityInsights/',parameters('analytic49-id'))]",
+            "apiVersion": "2020-01-01",
+            "kind": "Scheduled",
+            "location": "[parameters('workspace-location')]",
+            "properties": {
+                "description": "Identifies SAP Notes implementation in the system.\n\nSource Action: Implement SAP Note using SNOTE/TCI.\n\n*Data Sources: SAPcon -  Change Requests*",
+                "displayName": "(Preview) SAP - Informational - Lifecycle - SAP Notes were implemented in system",
+                "enabled": false,
+                "query": "// Define variables\r\nlet VarNote = \"NOTE\";\r\nlet AuditLogIn = dynamic(['AU1', 'AU5']); // Messages of connect with user\r\n// Query logic\r\nlet LastLogin = \r\nABAPAuditLog_CL\r\n| where MessageID_s in (AuditLogIn)\r\n| summarize TimeGenerated = arg_max(TimeGenerated, *) by SystemID_s, ClientID_s, User_s; // Get last connection date for user\r\nABAPCRLog_CL \r\n| where ObjectType_s == VarNote // Type is NOTE\r\n| lookup kind=inner LastLogin on $left.Owner_s == $right.User_s // Get last login details\r\n| summarize by TimeGenerated, SystemID_s, SystemNumber_s, ClientID_s, Owner_s, Request_s, Description_s, ObjectName_s, Category, Status_s, AccountCustomEntity = Email_s, IPCustomEntity = TerminalIPv6_s, HostCustomEntity = Host_s",
+                "queryFrequency": "PT1H",
+                "queryPeriod": "PT1H",
+                "severity": "Informational",
+                "suppressionDuration": "PT1H",
+                "suppressionEnabled": false,
+                "triggerOperator": "GreaterThan",
+                "triggerThreshold": 0
             }
         },
         {

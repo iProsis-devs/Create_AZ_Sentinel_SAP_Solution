@@ -749,52 +749,10 @@
                     {
                         "name": "analytic44",
                         "type": "Microsoft.Common.Section",
-                        "label": "(Preview) SAP - Informational - Lifecycle - SAP Notes were implemented in system",
-                        "elements": [
-                            {
-                                "name": "analytic44-text",
-                                "type": "Microsoft.Common.TextBlock",
-                                "options": {
-                                    "text": "Identifies SAP Notes implementation in the system.\n\nSource Action: Implement SAP Note using SNOTE/TCI.\n\n*Data Sources: SAPcon -  Change Requests*"
-                                }
-                            }
-                        ]
-                    },
-                    {
-                        "name": "analytic45",
-                        "type": "Microsoft.Common.Section",
-                        "label": "(Preview) SAP - Medium - Sensitive Profile Changes",
-                        "elements": [
-                            {
-                                "name": "analytic45-text",
-                                "type": "Microsoft.Common.TextBlock",
-                                "options": {
-                                    "text": "Identifies changes in sensitive profiles. \n\nSource Action: Change the profile's role using PFCG.\n\nSensitive profiles should be maintained in \"SAP - Sensitive Profiles\" Watchlist\n\n*Data Sources: SAPcon -  Change Documents Log*"
-                                }
-                            }
-                        ]
-                    },
-                    {
-                        "name": "analytic46",
-                        "type": "Microsoft.Common.Section",
                         "label": "(Preview) SAP - Medium - Execution of Obsolete or Insecure Function Module",
                         "elements": [
                             {
-                                "name": "analytic46-text",
-                                "type": "Microsoft.Common.TextBlock",
-                                "options": {
-                                    "text": "Identifies execution of an obsolete/insecure ABAP program.\n\nSource Action: Execute a program directly using SE38/SA38/SE80 or by using a background job.\n\n**Recommended for Production only**\n\nObsolete programs should be maintained in \"SAP - Obsolete Programs\" Watchlist\n\n*Data Sources: SAPcon -  Audit Log*"
-                                }
-                            }
-                        ]
-                    },
-                    {
-                        "name": "analytic47",
-                        "type": "Microsoft.Common.Section",
-                        "label": "(Preview) SAP - High - Execution of Sensitive Function Module",
-                        "elements": [
-                            {
-                                "name": "analytic47-text",
+                                "name": "analytic44-text",
                                 "type": "Microsoft.Common.TextBlock",
                                 "options": {
                                     "text": "Identifies execution of an obsolete/insecure ABAP Function Module.\n\nSource Action: Execute an obsolete/insecure function module directly using SE37.\n\n**Recommended for Production only**\n\nObsolete functions should be maintained in \"SAP - Obsolete Function Modules\" Watchlist.\nTable logging changes should be activated for table \"EUFUNC\" in backend. (SE13)\n\n*Data Sources: SAPcon -  Table Data Log*"
@@ -803,12 +761,26 @@
                         ]
                     },
                     {
-                        "name": "analytic48",
+                        "name": "analytic45",
+                        "type": "Microsoft.Common.Section",
+                        "label": "(Preview) SAP - High - Execution of Sensitive Function Module",
+                        "elements": [
+                            {
+                                "name": "analytic45-text",
+                                "type": "Microsoft.Common.TextBlock",
+                                "options": {
+                                    "text": "Identifies execution of a sensitive ABAP Function Module.\n\nSource Action: Execute a sensitive function module directly using SE37.\n\n**Recommended for Production only**\n\nSensitive functions should be maintained in \"SAP - Sensitive Function Modules\" Watchlist.\nTable logging changes should be activated for table \"EUFUNC\" in backend. (SE13)\n\n*Data Sources: SAPcon -  Table Data Log*"
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "name": "analytic46",
                         "type": "Microsoft.Common.Section",
                         "label": "(Preview) SAP - High - Activation or Deactivation of ICF Service",
                         "elements": [
                             {
-                                "name": "analytic48-text",
+                                "name": "analytic46-text",
                                 "type": "Microsoft.Common.TextBlock",
                                 "options": {
                                     "text": "Identifies activation or deactivation of ICF Services.\nSource Action: Activate or deactivate a service using SICF.\n*Data Sources: SAPcon - Table Data Log*"
@@ -817,12 +789,12 @@
                         ]
                     },
                     {
-                        "name": "analytic49",
+                        "name": "analytic47",
                         "type": "Microsoft.Common.Section",
                         "label": "(Preview) SAP - High - New ICF Services",
                         "elements": [
                             {
-                                "name": "analytic49-text",
+                                "name": "analytic47-text",
                                 "type": "Microsoft.Common.TextBlock",
                                 "options": {
                                     "text": "Identifies creation of ICF Services.\nSource Action: Create a service using SICF.\n*Data Sources: SAPcon - Table Data Log*"
@@ -831,15 +803,29 @@
                         ]
                     },
                     {
-                        "name": "analytic50",
+                        "name": "analytic48",
                         "type": "Microsoft.Common.Section",
                         "label": "(Preview) SAP - High - New ICF Service Handlers",
                         "elements": [
                             {
-                                "name": "analytic50-text",
+                                "name": "analytic48-text",
                                 "type": "Microsoft.Common.TextBlock",
                                 "options": {
                                     "text": "Identifies creation of ICF Handlers.\nSource Action: Assign a new handler to a service using SICF.\n*Data Sources: SAPcon - Table Data Log*"
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "name": "analytic49",
+                        "type": "Microsoft.Common.Section",
+                        "label": "(Preview) SAP - Informational - Lifecycle - SAP Notes were implemented in system",
+                        "elements": [
+                            {
+                                "name": "analytic49-text",
+                                "type": "Microsoft.Common.TextBlock",
+                                "options": {
+                                    "text": "Identifies SAP Notes implementation in the system.\n\nSource Action: Implement SAP Note using SNOTE/TCI.\n\n*Data Sources: SAPcon -  Change Requests*"
                                 }
                             }
                         ]

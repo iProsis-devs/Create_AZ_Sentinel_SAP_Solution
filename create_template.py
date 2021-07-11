@@ -8,7 +8,7 @@ def create_template_process():
     alerts_source_file_name = "\Alerts\Scheduled_no_id.json"
     template_file_name = "\mainTemplate.json"
     wl_directory = "Watchlists"
-    wb_desc_path = "Watchlists\\Watchlists_desc.txt"
+    wb_desc_path = "Watchlists\\WatchlistsDesc.json"
     wb_directory = "Workbooks"
     solution_directory = "\\Solution\\"
     ab_path = os.getcwd()
@@ -119,12 +119,10 @@ def create_template_process():
             alert_template["properties"]["tactics"] = alert_by_name[alert]["Tactics"]
         resources.append(alert_template)
 
-    # Add Watchlists to template
-    desc_by_watchlist = {}
-    with open(wb_desc_path) as f:
-        for line in f:
-            (key, val) = line.split(":")
-            desc_by_watchlist[key] = val.replace("\n", "")
+    
+    # Load Base File
+    with open(wb_desc_path, 'rb') as data_file:
+        desc_by_watchlist = json.load(data_file)  # load the json file
 
     watchlists_by_name = {}
     for file in os.listdir(wl_directory):
