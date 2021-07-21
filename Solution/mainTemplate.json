@@ -727,8 +727,8 @@
                 "displayName": "(Preview) SAP - Medium - Transaction is unlocked",
                 "enabled": false,
                 "query": "// Audit Log Classes - Transaction UnLock Events\r\n// AUP - Transaction Locked\r\nlet AuditClasses = dynamic(['AUQ']); // AUQ - Transaction Unlocked\r\nABAPAuditLog_CL \r\n| where MessageID_s in (AuditClasses)\r\n| project-rename TransactionCode = Variable1_s\r\n| parse TransactionCode with \"( TR ) \" _TCODE \" - \" ClientTR // Parse to _TCODE and ClientTR\r\n// Specific Client Action (SM01_CUS) / Cross Client (SM01_DEV)\r\n| extend TransactionCode = iif(_TCODE != \"\",_TCODE, TransactionCode) // Check if _TCODE is not empty\r\n| extend ClientTR = iif(ClientTR != \"\",ClientTR, \"CrossClient\") // Check if ClientTR is not empty\r\n| project \r\n// Details\r\nTimeGenerated, SystemID_s, User_s, MessageText_s,TransactionCode, ClientTR,\r\nAccountCustomEntity = Email_s, IPCustomEntity = TerminalIPv6_s, HostCustomEntity = Host_s\r\n\r\n",
-                "queryFrequency": "PT0H",
-                "queryPeriod": "PT0H",
+                "queryFrequency": "PT1D",
+                "queryPeriod": "PT1D",
                 "severity": "Medium",
                 "suppressionDuration": "PT1H",
                 "suppressionEnabled": false,
@@ -1622,7 +1622,7 @@
                 "description": "Identifies execution of RFC using dynamic destinations. Source Action: Execute an ABAP report which is using dynamic destinations (cl_dynamic_destination). Sample report: DEMO_RFC_DYNAMIC_DEST. *Data Sources: SAPcon - Audit Log*",
                 "displayName": "(Preview) SAP - Low - Dynamic RFC Destination",
                 "enabled": false,
-                "query": "// Define variables\r\nlet AuditClasses = dynamic(['FU1']); // Message of dynamic RFC execution using dynamic destination\r\n// Query logic\r\nABAPAuditLog_CL\r\n| where MessageID_s in (AuditClasses)\r\n| parse Variable3_s with \"id=\" Created_RFC_Name\r\n| project TimeGenerated, SystemID_s, ClientID_s, User_s, AccountCustomEntity = Email_s, IPCustomEntity = TerminalIPv6_s, HostCustomEntity = Host_s, ABAPProgramName_s, ExecutedProgram = Variable2_s, Created_RFC_Name",
+                "query": "// Define variables\r\nlet AuditClasses = dynamic(['FU1']); // Message of dynamic RFC execution using dynamic destination\r\n// Query logic\r\nABAPAuditLog_CL\r\n| where MessageID_s in (AuditClasses)\r\n| project TimeGenerated, SystemID_s, ClientID_s, AccountCustomEntity = Email_s, IPCustomEntity = TerminalIPv6_s, HostCustomEntity = Host_s, ABAPProgramName_s",
                 "queryFrequency": "PT6H",
                 "queryPeriod": "PT6H",
                 "severity": "Low",
@@ -1716,7 +1716,27 @@
             "kind": "Scheduled",
             "location": "[parameters('workspace-location')]",
             "properties": {
-                "description": "Identifies execution of an obsolete/insecure ABAP Function Module.\n\nSource Action: Execute an obsolete/insecure function module directly using SE37.\n\n**Recommended for Production only**\n\nObsolete functions should be maintained in \"SAP - Obsolete Function Modules\" Watchlist.\nTable logging changes should be activated for table \"EUFUNC\" in backend. (SE13)\n\n*Data Sources: SAPcon -  Table Data Log*",
+                "description": "Identifies SAP Notes implementation in the system.\n\nSource Action: Implement SAP Note using SNOTE/TCI.\n\n*Data Sources: SAPcon -  Change Requests*",
+                "displayName": "(Preview) SAP - Informational - Lifecycle - SAP Notes were implemented in system",
+                "enabled": false,
+                "query": "// Define variables\r\nlet VarNote = \"NOTE\";\r\nlet AuditLogIn = dynamic(['AU1', 'AU5']); // Messages of connect with user\r\n// Query logic\r\nlet LastLogin = \r\nABAPAuditLog_CL\r\n| where MessageID_s in (AuditLogIn)\r\n| summarize TimeGenerated = arg_max(TimeGenerated, *) by SystemID_s, ClientID_s, User_s; // Get last connection date for user\r\nABAPCRLog_CL \r\n| where ObjectType_s == VarNote // Type is NOTE\r\n| lookup kind=inner LastLogin on $left.Owner_s == $right.User_s // Get last login details\r\n| summarize by TimeGenerated, SystemID_s, SystemNumber_s, ClientID_s, Owner_s, Request_s, Description_s, ObjectName_s, Category, Status_s, AccountCustomEntity = Email_s, IPCustomEntity = TerminalIPv6_s, HostCustomEntity = Host_s",
+                "queryFrequency": "PT1D",
+                "queryPeriod": "PT1D",
+                "severity": "Informational",
+                "suppressionDuration": "PT1H",
+                "suppressionEnabled": false,
+                "triggerOperator": "GreaterThan",
+                "triggerThreshold": 0
+            }
+        },
+        {
+            "type": "Microsoft.OperationalInsights/workspaces/providers/alertRules",
+            "name": "[concat(parameters('workspace'),'/Microsoft.SecurityInsights/',parameters('analytic45-id'))]",
+            "apiVersion": "2020-01-01",
+            "kind": "Scheduled",
+            "location": "[parameters('workspace-location')]",
+            "properties": {
+                "description": "Identifies execution of an obsolete/insecure ABAP program.\n\nSource Action: Execute a program directly using SE38/SA38/SE80 or by using a background job.\n\n**Recommended for Production only**\n\nObsolete programs should be maintained in \"SAP - Obsolete Programs\" Watchlist\n\n*Data Sources: SAPcon -  Audit Log*",
                 "displayName": "(Preview) SAP - Medium - Execution of Obsolete or Insecure Function Module",
                 "enabled": false,
                 "query": "// Define variables\r\nlet RelTable = \"EUFUNC\"; // Relevant table\r\nlet AuditLogIn = dynamic(['AU1', 'AU5']); // Messages of connect with user\r\nlet ObsoleteModules =  _GetWatchlist('SAP - Obsolete Function Modules');\r\n// Maintain if watchlist is not available\r\nlet fixedModules = datatable(FunctionModule:string)['TH_SAPREL','TH_SAPREL2', 'TH_SAPREL3','SUSR_RFC_USER_INTERFACE','RFC_ABAP_INSTALL_AND_RUN']; \r\nlet UnitedModules =\r\ntoscalar(union fixedModules, ObsoleteModules\r\n| summarize FunctionModules =  make_set(FunctionModule));\r\n// Query logic\r\nlet LastLogin = \r\nABAPAuditLog_CL\r\n| where MessageID_s in (AuditLogIn)\r\n| summarize TimeGenerated = arg_max(TimeGenerated, *) by SystemID_s, ClientID_s, User_s; // Get last connection date for user\r\nABAPTableDataLog_CL\r\n| where TableName_s == RelTable\r\n| extend Module = extract(@\"\\s+(.{1,}\\b)\\s+\", 1, LogKey_s, typeof(string)) // Extract Function Module\r\n| extend FunctionGroup = extract(@\"^FL([^\\s]*)\\s\", 1, LogKey_s, typeof(string)) // Extract Function Group\r\n| extend ExecutionVariant = extract(@\"\\b(\\w+)$\", 1, LogKey_s, typeof(string)) // Extract Execution Varient\r\n| where Module in (UnitedModules) // Module is obsolete\r\n| lookup kind=inner LastLogin on $left.UserName_s == $right.User_s\r\n| project TimeGenerated, SystemID_s, ClientID_s,  AccountCustomEntity = Email_s, IPCustomEntity = TerminalIPv6_s, HostCustomEntity = Host_s, Module, FunctionGroup, ExecutionVariant",
@@ -1735,12 +1755,12 @@
         },
         {
             "type": "Microsoft.OperationalInsights/workspaces/providers/alertRules",
-            "name": "[concat(parameters('workspace'),'/Microsoft.SecurityInsights/',parameters('analytic45-id'))]",
+            "name": "[concat(parameters('workspace'),'/Microsoft.SecurityInsights/',parameters('analytic46-id'))]",
             "apiVersion": "2020-01-01",
             "kind": "Scheduled",
             "location": "[parameters('workspace-location')]",
             "properties": {
-                "description": "Identifies execution of a sensitive ABAP Function Module.\n\nSource Action: Execute a sensitive function module directly using SE37.\n\n**Recommended for Production only**\n\nSensitive functions should be maintained in \"SAP - Sensitive Function Modules\" Watchlist.\nTable logging changes should be activated for table \"EUFUNC\" in backend. (SE13)\n\n*Data Sources: SAPcon -  Table Data Log*",
+                "description": "Identifies execution of an obsolete/insecure ABAP Function Module.\n\nSource Action: Execute an obsolete/insecure function module directly using SE37.\n\n**Recommended for Production only**\n\nObsolete functions should be maintained in \"SAP - Obsolete Function Modules\" Watchlist.\nTable logging changes should be activated for table \"EUFUNC\" in backend. (SE13)\n\n*Data Sources: SAPcon -  Table Data Log*",
                 "displayName": "(Preview) SAP - High - Execution of Sensitive Function Module",
                 "enabled": false,
                 "query": "// Define variables\r\nlet RelTable = \"EUFUNC\"; // Relevant table\r\nlet AuditLogIn = dynamic(['AU1', 'AU5']); // Messages of connect with user\r\nlet SenseModules =  _GetWatchlist('SAP - Sensitive Function Modules');\r\nlet fixedModules = datatable(FunctionModule:string)['RSAU_CLEAR_AUDIT_LOG','BAPI_USER_CREATE', 'RFC_GET_TABLE_ENTRIES']; \r\nlet UnitedModules =\r\ntoscalar(union fixedModules, SenseModules\r\n| summarize FunctionModules =  make_set(FunctionModule));\r\n// Query logic\r\nlet LastLogin = \r\nABAPAuditLog_CL\r\n| where MessageID_s in (AuditLogIn)\r\n| summarize TimeGenerated = arg_max(TimeGenerated, *) by SystemID_s, ClientID_s, User_s; // Get last connection date for user\r\nABAPTableDataLog_CL\r\n| where TableName_s == RelTable \r\n| extend Module = extract(@\"\\s+(.{1,}\\b)\\s+\", 1, LogKey_s, typeof(string)) // Extract Function Module\r\n| extend FunctionGroup = extract(@\"^FL([^\\s]*)\\s\", 1, LogKey_s, typeof(string)) // Extract Function Group\r\n| extend ExecutionVariant = extract(@\"\\b(\\w+)$\", 1, LogKey_s, typeof(string)) // Extract Execution Varient\r\n| where Module in (UnitedModules) // Module is sensitive\r\n| lookup kind=inner LastLogin on $left.UserName_s == $right.User_s\r\n| project TimeGenerated, SystemID_s, ClientID_s,  AccountCustomEntity = Email_s, IPCustomEntity = TerminalIPv6_s, HostCustomEntity = Host_s, Module, FunctionGroup, ExecutionVariant",
@@ -1759,7 +1779,7 @@
         },
         {
             "type": "Microsoft.OperationalInsights/workspaces/providers/alertRules",
-            "name": "[concat(parameters('workspace'),'/Microsoft.SecurityInsights/',parameters('analytic46-id'))]",
+            "name": "[concat(parameters('workspace'),'/Microsoft.SecurityInsights/',parameters('analytic47-id'))]",
             "apiVersion": "2020-01-01",
             "kind": "Scheduled",
             "location": "[parameters('workspace-location')]",
@@ -1784,7 +1804,7 @@
         },
         {
             "type": "Microsoft.OperationalInsights/workspaces/providers/alertRules",
-            "name": "[concat(parameters('workspace'),'/Microsoft.SecurityInsights/',parameters('analytic47-id'))]",
+            "name": "[concat(parameters('workspace'),'/Microsoft.SecurityInsights/',parameters('analytic48-id'))]",
             "apiVersion": "2020-01-01",
             "kind": "Scheduled",
             "location": "[parameters('workspace-location')]",
@@ -1809,7 +1829,7 @@
         },
         {
             "type": "Microsoft.OperationalInsights/workspaces/providers/alertRules",
-            "name": "[concat(parameters('workspace'),'/Microsoft.SecurityInsights/',parameters('analytic48-id'))]",
+            "name": "[concat(parameters('workspace'),'/Microsoft.SecurityInsights/',parameters('analytic49-id'))]",
             "apiVersion": "2020-01-01",
             "kind": "Scheduled",
             "location": "[parameters('workspace-location')]",
@@ -1830,26 +1850,6 @@
                     "LateralMovement",
                     "CommandAndControl"
                 ]
-            }
-        },
-        {
-            "type": "Microsoft.OperationalInsights/workspaces/providers/alertRules",
-            "name": "[concat(parameters('workspace'),'/Microsoft.SecurityInsights/',parameters('analytic49-id'))]",
-            "apiVersion": "2020-01-01",
-            "kind": "Scheduled",
-            "location": "[parameters('workspace-location')]",
-            "properties": {
-                "description": "Identifies SAP Notes implementation in the system.\n\nSource Action: Implement SAP Note using SNOTE/TCI.\n\n*Data Sources: SAPcon -  Change Requests*",
-                "displayName": "(Preview) SAP - Informational - Lifecycle - SAP Notes were implemented in system",
-                "enabled": false,
-                "query": "// Define variables\r\nlet VarNote = \"NOTE\";\r\nlet AuditLogIn = dynamic(['AU1', 'AU5']); // Messages of connect with user\r\n// Query logic\r\nlet LastLogin = \r\nABAPAuditLog_CL\r\n| where MessageID_s in (AuditLogIn)\r\n| summarize TimeGenerated = arg_max(TimeGenerated, *) by SystemID_s, ClientID_s, User_s; // Get last connection date for user\r\nABAPCRLog_CL \r\n| where ObjectType_s == VarNote // Type is NOTE\r\n| lookup kind=inner LastLogin on $left.Owner_s == $right.User_s // Get last login details\r\n| summarize by TimeGenerated, SystemID_s, SystemNumber_s, ClientID_s, Owner_s, Request_s, Description_s, ObjectName_s, Category, Status_s, AccountCustomEntity = Email_s, IPCustomEntity = TerminalIPv6_s, HostCustomEntity = Host_s",
-                "queryFrequency": "PT1H",
-                "queryPeriod": "PT1H",
-                "severity": "Informational",
-                "suppressionDuration": "PT1H",
-                "suppressionEnabled": false,
-                "triggerOperator": "GreaterThan",
-                "triggerThreshold": 0
             }
         },
         {

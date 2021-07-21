@@ -8,7 +8,7 @@ def create_ui_defintion_process():
     ui_def_file_name = "\createUiDefinition.json"
     ab_path = os.getcwd()
     wb_directory = "Workbooks"
-    wb_desc_path = "Watchlists\\Watchlists_desc.txt"
+    wb_desc_path = "Watchlists\\WatchlistsDesc.json"
     solution_directory = "\\Solution\\"
     alerts_file_path = ab_path + alerts_source_file_name
     ui_def_path = ab_path + ui_def_file_name
@@ -34,11 +34,9 @@ def create_ui_defintion_process():
 
     alert_len = range(1, len(alerts)+1)
 
-    desc_by_watchlist = {}
-    with open(wb_desc_path) as f:
-        for line in f:
-            (key, val) = line.split(":")
-            desc_by_watchlist[key] = val.replace("\n", "")
+    # Load Base File
+    with open(wb_desc_path, 'rb') as data_file:
+        desc_by_watchlist = json.load(data_file)  # load the json file
     
     wl_len = range(1, len(desc_by_watchlist)+1)
 

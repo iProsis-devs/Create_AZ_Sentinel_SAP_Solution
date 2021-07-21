@@ -1,6 +1,20 @@
+from datetime import time
 import json
 import os
 import pandas as pd
+
+
+def parse_time(time_parameter):
+    parsed = "PT"
+    if time_parameter["Days"] > 0:
+        parsed += str(time_parameter["Days"]) + "D"
+    if time_parameter["Hours"] > 0:
+        parsed += str(time_parameter["Hours"]) + "H"
+    if time_parameter["Minutes"] > 0:
+        parsed += str(time_parameter["Minutes"]) + "M"
+    return parsed
+
+    
 
 
 def create_template_process():
@@ -88,9 +102,9 @@ def create_template_process():
                 }
             }
         param["analytic" + str(i) + "-id"] = analytic_param
-        queryFrequency = "PT" + str(alert_by_name[alert]["QueryFrequency"]["Hours"]) + "H"
-        queryPeriod = "PT" + str(alert_by_name[alert]["QueryPeriod"]["Hours"]) + "H"
-        suppressionDuration = "PT" + str(alert_by_name[alert]["SuppressionDuration"]["Hours"]) + "H"
+        queryFrequency = parse_time(alert_by_name[alert]["QueryFrequency"])
+        queryPeriod = parse_time(alert_by_name[alert]["QueryPeriod"])
+        suppressionDuration = parse_time(alert_by_name[alert]["SuppressionDuration"])
         if alert_by_name[alert]["TriggerOperator"] == 0:
             triggerOperator = "GreaterThan"
         else:
