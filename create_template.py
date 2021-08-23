@@ -3,19 +3,17 @@ import json
 import os
 import pandas as pd
 
-
-def parse_time(time_parameter):
-    parsed = "PT"
-    if time_parameter["Days"] > 0:
-        parsed += str(time_parameter["Days"]) + "D"
-    if time_parameter["Hours"] > 0:
-        parsed += str(time_parameter["Hours"]) + "H"
-    if time_parameter["Minutes"] > 0:
-        parsed += str(time_parameter["Minutes"]) + "M"
-    return parsed
-
-    
-
+def clean_nones(value):
+    if isinstance(value, list):
+        return [clean_nones(x) for x in value if x is not None]
+    elif isinstance(value, dict):
+        return {
+            key: clean_nones(val)
+            for key, val in value.items()
+            if val is not None
+        }
+    else:
+        return value
 
 def create_template_process():
     # Constants
@@ -73,7 +71,7 @@ def create_template_process():
                 "apiVersion": "2020-02-12",
                 "properties": {
                     "displayName": "[concat('Preview - ',parameters('workbook"+str(i)+"-name'), ' - ', parameters('formattedTimeNow'))]",
-                    "serializedData": json.dumps(workbook_by_name[workbook], indent=4),
+                    "serializedData": json.dumps(clean_nones(workbook_by_name[workbook].copy()), indent=4),
                     "version": "1.0",
                     "sourceId": "[variables('_workbook-source')]",
                     "category": "sentinel"
@@ -86,13 +84,10 @@ def create_template_process():
     with open(alerts_file_path, 'rb') as data_file:
         alerts = json.load(data_file)  # load the json file
 
-    alert_by_name = {}
-    for element in alerts:
-        name = element.get("DisplayName")
-        alert_by_name[name] = element
 
-    alerts_num = range(1, len(alert_by_name)+1)
-    for alert, i in zip(alert_by_name,alerts_num):
+
+    alerts_num = range(1, len(alerts)+1)
+    for alert, i in zip(alerts,alerts_num):
         analytic_param = {
                 "type": "string",
                 "defaultValue": "[newGuid()]",
@@ -101,37 +96,23 @@ def create_template_process():
                     "description": "Unique id for the scheduled alert rule"
                 }
             }
-        param["analytic" + str(i) + "-id"] = analytic_param
-        queryFrequency = parse_time(alert_by_name[alert]["QueryFrequency"])
-        queryPeriod = parse_time(alert_by_name[alert]["QueryPeriod"])
-        suppressionDuration = parse_time(alert_by_name[alert]["SuppressionDuration"])
-        if alert_by_name[alert]["TriggerOperator"] == 0:
-            triggerOperator = "GreaterThan"
-        else:
-            triggerOperator = "EqualTo"
-        alert_template = {
-                "type": "Microsoft.OperationalInsights/workspaces/providers/alertRules",
-                "name": "[concat(parameters('workspace'),'/Microsoft.SecurityInsights/',parameters('analytic" + str(i) +"-id'))]",
-                "apiVersion": "2020-01-01",
-                "kind": "Scheduled",
-                "location": "[parameters('workspace-location')]",
-                "properties": {
-                    "description": alert_by_name[alert]["Description"],
-                    "displayName": alert,
-                    "enabled":  False,
-                    "query": alert_by_name[alert]["Query"],
-                    "queryFrequency": queryFrequency,
-                    "queryPeriod": queryPeriod,
-                    "severity": alert_by_name[alert]["Severity"],
-                    "suppressionDuration": suppressionDuration,
-                    "suppressionEnabled": alert_by_name[alert]["SuppressionEnabled"],
-                    "triggerOperator": triggerOperator,
-                    "triggerThreshold": alert_by_name[alert]["TriggerThreshold"],
-                }
-            }
-        if alert_by_name[alert]["Tactics"] is not None:
-            alert_template["properties"]["tactics"] = alert_by_name[alert]["Tactics"]
-        resources.append(alert_template)
+        param[f"analytic{i}-id"] = analytic_param
+        alert["name"] = f"[concat(parameters('workspace'),'/Microsoft.SecurityInsights/',parameters('analytic{i}-id'))]"
+        prop = alert.get("properties")
+        elements_to_remove = []
+        for element in prop:
+            if prop[element] is None or prop[element] == []:
+                elements_to_remove.append(element)
+        for element in elements_to_remove:
+            prop.pop(element)
+        elements_to_remove = []
+        group = prop["incidentConfiguration"]["groupingConfiguration"]
+        for element in group:
+            if group[element] is None or group[element] == []:
+                elements_to_remove.append(element)
+        for element in elements_to_remove:
+            group.pop(element)
+        resources.append(alert)
 
     
     # Load Base File
@@ -155,7 +136,7 @@ def create_template_process():
                     "description": "Unique id for a watchilst"
                 }
             }
-        param["watchlist" + str(i) + "-id"] = wl_param
+        param[f"watchlist{i}-id"] = wl_param
         headers = list(watchlists_by_name[watchlist])
 
         watch_as_content = ""
@@ -169,15 +150,15 @@ def create_template_process():
         watch_as_content += "\n"
 
         for index, row in watchlists_by_name[watchlist].iterrows():
-            for i in range(len(headers)):
-                if i != 0:
+            for z in range(len(headers)):
+                if z != 0:
                     watch_as_content += ","
-                watch_as_content += str(row[i])
+                watch_as_content += str(row[z])
             watch_as_content += "\n"
 
         watchlist_template = {
                 "type": "Microsoft.OperationalInsights/workspaces/providers/Watchlists",
-                "name": "[concat(parameters('workspace'),'/Microsoft.SecurityInsights/','" + watchlist + "')]",
+                "name": f"[concat(parameters('workspace'),'/Microsoft.SecurityInsights/',parameters('watchlist{i}-id'))]",
                 "apiVersion": "2021-03-01-preview",
                 "properties": {
                     "description": desc_by_watchlist[watchlist],

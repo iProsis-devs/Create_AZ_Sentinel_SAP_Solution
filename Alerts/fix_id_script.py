@@ -23,9 +23,10 @@ def fix_id():
 
     with open(source_file_name, 'rb') as data_file:
         data = json.load(data_file)  # load the json file
+        data = data.get("resources")
 
     for element in data:
-        element.pop('Id', None)  # if the key is "Id", pop it out
+        element.pop('id', None)  # if the key is "Id", pop it out
 
     with open(output_file_name, 'w') as data_file:  # create a new json file
         json.dump(data, data_file, indent=4)

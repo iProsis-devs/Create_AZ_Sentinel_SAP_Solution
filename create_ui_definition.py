@@ -29,8 +29,9 @@ def create_ui_defintion_process():
         alerts = json.load(data_file)  # load the json file
 
     for element in alerts:
-        name = element.get("DisplayName")
-        alert_by_name[name] = element.get("Description")
+        prop = element.get("properties")
+        name = prop.get("displayName")
+        alert_by_name[name] = prop.get("description")
 
     alert_len = range(1, len(alerts)+1)
 
@@ -57,7 +58,7 @@ def create_ui_defintion_process():
                                         "name": "workbook"+str(i)+"-text",
                                         "type": "Microsoft.Common.TextBlock",
                                         "options": {
-                                            "text": "The Azure Sentinel SAP application layer Logs connector is integral part of Azure Sentinel Continuous Threat Monitoring for SAP Solution."
+                                            "text": "SAP Workbook"
                                         }
                                     },
                                     {

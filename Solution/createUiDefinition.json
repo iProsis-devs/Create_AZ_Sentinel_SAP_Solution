@@ -99,20 +99,98 @@
                     {
                         "name": "workbook1",
                         "type": "Microsoft.Common.Section",
-                        "label": "SAP - Monitor Workbook",
+                        "label": "SAP - Audit Log Browser",
                         "elements": [
                             {
                                 "name": "workbook1-text",
                                 "type": "Microsoft.Common.TextBlock",
                                 "options": {
-                                    "text": "The Azure Sentinel SAP application layer Logs connector is integral part of Azure Sentinel Continuous Threat Monitoring for SAP Solution."
+                                    "text": "SAP Workbook"
                                 }
                             },
                             {
                                 "name": "workbook1-name",
                                 "type": "Microsoft.Common.TextBox",
                                 "label": "Display Name",
-                                "defaultValue": "SAP - Monitor Workbook",
+                                "defaultValue": "SAP - Audit Log Browser",
+                                "toolTip": "Display name for the workbook.",
+                                "constraints": {
+                                    "required": true,
+                                    "regex": "[a-z0-9A-Z]{1,256}$",
+                                    "validationMessage": "Please enter a workbook name"
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "name": "workbook2",
+                        "type": "Microsoft.Common.Section",
+                        "label": "SAP - Initial Access & Attempts to Bypass SAP Security Mechanisms",
+                        "elements": [
+                            {
+                                "name": "workbook2-text",
+                                "type": "Microsoft.Common.TextBlock",
+                                "options": {
+                                    "text": "SAP Workbook"
+                                }
+                            },
+                            {
+                                "name": "workbook2-name",
+                                "type": "Microsoft.Common.TextBox",
+                                "label": "Display Name",
+                                "defaultValue": "SAP - Initial Access & Attempts to Bypass SAP Security Mechanisms",
+                                "toolTip": "Display name for the workbook.",
+                                "constraints": {
+                                    "required": true,
+                                    "regex": "[a-z0-9A-Z]{1,256}$",
+                                    "validationMessage": "Please enter a workbook name"
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "name": "workbook3",
+                        "type": "Microsoft.Common.Section",
+                        "label": "SAP - Persistency & Data exfiltration",
+                        "elements": [
+                            {
+                                "name": "workbook3-text",
+                                "type": "Microsoft.Common.TextBlock",
+                                "options": {
+                                    "text": "SAP Workbook"
+                                }
+                            },
+                            {
+                                "name": "workbook3-name",
+                                "type": "Microsoft.Common.TextBox",
+                                "label": "Display Name",
+                                "defaultValue": "SAP - Persistency & Data exfiltration",
+                                "toolTip": "Display name for the workbook.",
+                                "constraints": {
+                                    "required": true,
+                                    "regex": "[a-z0-9A-Z]{1,256}$",
+                                    "validationMessage": "Please enter a workbook name"
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "name": "workbook4",
+                        "type": "Microsoft.Common.Section",
+                        "label": "SAP - Suspicious Privileges Operations",
+                        "elements": [
+                            {
+                                "name": "workbook4-text",
+                                "type": "Microsoft.Common.TextBlock",
+                                "options": {
+                                    "text": "SAP Workbook"
+                                }
+                            },
+                            {
+                                "name": "workbook4-name",
+                                "type": "Microsoft.Common.TextBox",
+                                "label": "Display Name",
+                                "defaultValue": "SAP - Suspicious Privileges Operations",
                                 "toolTip": "Display name for the workbook.",
                                 "constraints": {
                                     "required": true,
@@ -147,13 +225,13 @@
                     {
                         "name": "analytic1",
                         "type": "Microsoft.Common.Section",
-                        "label": "(Preview) SAP - Medium - Security Audit Log Configuration Change",
+                        "label": "(Preview) SAP - High - Activation or Deactivation of ICF Service",
                         "elements": [
                             {
                                 "name": "analytic1-text",
                                 "type": "Microsoft.Common.TextBlock",
                                 "options": {
-                                    "text": "Idenitifes changes for configuration in Securiy Audit Log\n\nSource Action: change any  Security Audit Log Configuration using SM19/RSAU_CONFIG. (Filters/Status/Recording mode etc..)\n\n*Data Sources: SAPcon -  Audit Log*"
+                                    "text": "Identifies activation or deactivation of ICF Services.\nSource Action: Activate or deactivate a service using SICF.\n*Data Sources: SAPcon - Table Data Log*"
                                 }
                             }
                         ]
@@ -161,192 +239,10 @@
                     {
                         "name": "analytic2",
                         "type": "Microsoft.Common.Section",
-                        "label": "(Preview) SAP - High - Deactivation of Security Audit Log",
-                        "elements": [
-                            {
-                                "name": "analytic2-text",
-                                "type": "Microsoft.Common.TextBlock",
-                                "options": {
-                                    "text": "Identifies deactivation of Security Audit Log\n\nSource Action: Disable secruity Audit Log using SM19/RSAU_CONFIG.\n\n*Data Sources: SAPcon -  Audit Log*"
-                                }
-                            }
-                        ]
-                    },
-                    {
-                        "name": "analytic3",
-                        "type": "Microsoft.Common.Section",
-                        "label": "(Preview) SAP - Medium - Transaction is unlocked",
-                        "elements": [
-                            {
-                                "name": "analytic3-text",
-                                "type": "Microsoft.Common.TextBlock",
-                                "options": {
-                                    "text": "Identifies unlocking of a transaction. \n\nSource Action: Unlock a transaction code using SM01/SM01_DEV/SM01_CUS.\n\n*Data Sources: SAPcon -  Audit Log*\n"
-                                }
-                            }
-                        ]
-                    },
-                    {
-                        "name": "analytic4",
-                        "type": "Microsoft.Common.Section",
-                        "label": "(Preview) SAP - Medium - Assignment of a sensitive profile",
-                        "elements": [
-                            {
-                                "name": "analytic4-text",
-                                "type": "Microsoft.Common.TextBlock",
-                                "options": {
-                                    "text": "Identifies new assignments of a sensitive profile to a user.\n\nSource Action: Assign a profile to a User using SU01.\n\nSensitive profiles should be maintained in watchlist \"SAP - Sensitive Profiles\"\n\n*Data Sources: SAPcon -  Change Documents Log*\n"
-                                }
-                            }
-                        ]
-                    },
-                    {
-                        "name": "analytic5",
-                        "type": "Microsoft.Common.Section",
-                        "label": "(Preview) SAP - High - Sensitive privileged user logged in",
-                        "elements": [
-                            {
-                                "name": "analytic5-text",
-                                "type": "Microsoft.Common.TextBlock",
-                                "options": {
-                                    "text": "Identifies Dialog logon of a sensitive privileged user. \n\nSource Action: Logon to the backend system using SAP* or anoter privileged user.\n\nPriveleged users should be maintained in \"SAP - Privileged Users\" Watchlist\n\n*Data Sources: SAPcon -  Audit Log*"
-                                }
-                            }
-                        ]
-                    },
-                    {
-                        "name": "analytic6",
-                        "type": "Microsoft.Common.Section",
-                        "label": "(Preview) SAP - Medium - Assignment of a sensitive role",
-                        "elements": [
-                            {
-                                "name": "analytic6-text",
-                                "type": "Microsoft.Common.TextBlock",
-                                "options": {
-                                    "text": "Identifies new assignments for a sensitive role to a user.\n\nSource Action: Assign a role to a User using SU01 / PFCG.\n\nSensitive roles should be maintained in watchlist \"SAP -  Sensitive Roles\"\n\n*Data Sources: SAPcon -  Change Documents Log, Audit Log*"
-                                }
-                            }
-                        ]
-                    },
-                    {
-                        "name": "analytic7",
-                        "type": "Microsoft.Common.Section",
-                        "label": "(Preview) SAP - High - Execution of a Sensitive ABAP Program",
-                        "elements": [
-                            {
-                                "name": "analytic7-text",
-                                "type": "Microsoft.Common.TextBlock",
-                                "options": {
-                                    "text": "Identifies direct execution of a sensitive ABAP program. \n\nSource Action: Execute a program directly using SE38/SA38/SE80.\n\n**Recommended for Production only**\n\nABAP Programs should be maintained in watchlist \"SAP - Sensitive ABAP Programs\"\n\n*Data Sources: SAPcon -  Audit Log*"
-                                }
-                            }
-                        ]
-                    },
-                    {
-                        "name": "analytic8",
-                        "type": "Microsoft.Common.Section",
-                        "label": "(Preview) SAP - High - Execution of a Sensitive Transaction Code",
-                        "elements": [
-                            {
-                                "name": "analytic8-text",
-                                "type": "Microsoft.Common.TextBlock",
-                                "options": {
-                                    "text": "Identifies execution of a sensitive Transaction Code.\n\nSource Action: Execute a sensitive Transaction Code.\n\n**Recommended for Production only**\n\nTransaction Codes should be maintained in watchlist \"\"SAP - Sensitive Transaction Codes\"\"\n\n*Data Sources: SAPcon -  Audit Log*"
-                                }
-                            }
-                        ]
-                    },
-                    {
-                        "name": "analytic9",
-                        "type": "Microsoft.Common.Section",
-                        "label": "(Preview) SAP - Low - Sensitive Tables Direct Access By Dialog Logon",
-                        "elements": [
-                            {
-                                "name": "analytic9-text",
-                                "type": "Microsoft.Common.TextBlock",
-                                "options": {
-                                    "text": "Identifies generic table access by dialog logon\n\nSource Action: Open table contents using SE11/SE16/SE16N.\n\n**Recommended for Production only**\n\nTables should be maintained in \"\"SAP - Sensitive Tables\"\" Watchlist.\n\n*Data Sources: SAPcon -  Audit Log*"
-                                }
-                            }
-                        ]
-                    },
-                    {
-                        "name": "analytic10",
-                        "type": "Microsoft.Common.Section",
-                        "label": "(Preview) SAP - Medium - Multiple Logons by User",
-                        "elements": [
-                            {
-                                "name": "analytic10-text",
-                                "type": "Microsoft.Common.TextBlock",
-                                "options": {
-                                    "text": "Identifies logon of the same user from several terminals within scheduled time interval.\n\nSource Action: Logon using the same user thorugh different IP's.\n\n*Data Sources: SAPcon -  Audit Log*"
-                                }
-                            }
-                        ]
-                    },
-                    {
-                        "name": "analytic11",
-                        "type": "Microsoft.Common.Section",
-                        "label": "(Preview) SAP - Medium - Multiple Logons by IP",
-                        "elements": [
-                            {
-                                "name": "analytic11-text",
-                                "type": "Microsoft.Common.TextBlock",
-                                "options": {
-                                    "text": "Identifies logon of several users from same IP within scheduled time interval.\n\nSource Action: Logon using several users thorugh the same IP.\n\n*Data Sources: SAPcon -  Audit Log*"
-                                }
-                            }
-                        ]
-                    },
-                    {
-                        "name": "analytic12",
-                        "type": "Microsoft.Common.Section",
-                        "label": "(Preview) SAP - High - Login from unexpected network",
-                        "elements": [
-                            {
-                                "name": "analytic12-text",
-                                "type": "Microsoft.Common.TextBlock",
-                                "options": {
-                                    "text": "Identifies logons from an unexpected network.\n\nSource Action: Logon to the backend system from an IP address which is not assigned to one of the netwroks.\n\nNetworks should be maintained in watchlist \"SAP - Networks\"\n\n*Data Sources: SAPcon -  Audit Log*"
-                                }
-                            }
-                        ]
-                    },
-                    {
-                        "name": "analytic13",
-                        "type": "Microsoft.Common.Section",
-                        "label": "(Preview) SAP - High - RFC Execution of a Sensitive Function Module",
-                        "elements": [
-                            {
-                                "name": "analytic13-text",
-                                "type": "Microsoft.Common.TextBlock",
-                                "options": {
-                                    "text": "Identifies execution of a sensitive function module using RFC.\n\nSource Action: Execute a function module using RFC.\n\n**Recommended for Production only**\n\nFunction Modules should be maintained in watchlist \"SAP - Sensitive Function Modules\"\n\n*Data Sources: SAPcon -  Audit Log*"
-                                }
-                            }
-                        ]
-                    },
-                    {
-                        "name": "analytic14",
-                        "type": "Microsoft.Common.Section",
-                        "label": "(Preview) SAP - High - Function Module tested",
-                        "elements": [
-                            {
-                                "name": "analytic14-text",
-                                "type": "Microsoft.Common.TextBlock",
-                                "options": {
-                                    "text": "Identifies testing of a function module.\n\nSource Action: Test a function module using  SE37 / SE80.\n\n**Recommended for Production only**\n\n*Data Sources: SAPcon -  Audit Log*"
-                                }
-                            }
-                        ]
-                    },
-                    {
-                        "name": "analytic15",
-                        "type": "Microsoft.Common.Section",
                         "label": "(Preview) SAP - High - Change in Sensitive privileged user",
                         "elements": [
                             {
-                                "name": "analytic15-text",
+                                "name": "analytic2-text",
                                 "type": "Microsoft.Common.TextBlock",
                                 "options": {
                                     "text": "Identifies changes  of sensitive privileged users. \n\nSource Action: Change user details / authorizations using SU01.\n\nPriveleged users should be maintained in \"SAP - Privileged Users\" Watchlist\n\n*Data Sources: SAPcon -  Audit Log*"
@@ -355,138 +251,12 @@
                         ]
                     },
                     {
-                        "name": "analytic16",
-                        "type": "Microsoft.Common.Section",
-                        "label": "(Preview) SAP - Medium - Brute force attacks",
-                        "elements": [
-                            {
-                                "name": "analytic16-text",
-                                "type": "Microsoft.Common.TextBlock",
-                                "options": {
-                                    "text": "Identifies brute force attacks on SAP system according to failed logon attempts for the backend system.\n\nSource Action: Attempt to login from the same IP to several systems/clients within the scheduled time interval.\n\n*Data Sources: SAPcon -  Audit Log*"
-                                }
-                            }
-                        ]
-                    },
-                    {
-                        "name": "analytic17",
-                        "type": "Microsoft.Common.Section",
-                        "label": "(Preview) SAP - Low - Multiple Password Changes by User",
-                        "elements": [
-                            {
-                                "name": "analytic17-text",
-                                "type": "Microsoft.Common.TextBlock",
-                                "options": {
-                                    "text": "Identifies multiple password changes by user.\n\nSource Action: Change user password\n\n*Data Sources: SAPcon -  Audit Log*"
-                                }
-                            }
-                        ]
-                    },
-                    {
-                        "name": "analytic18",
-                        "type": "Microsoft.Common.Section",
-                        "label": "(Preview) SAP - High - HANA DB - Assign Admin Authorizations",
-                        "elements": [
-                            {
-                                "name": "analytic18-text",
-                                "type": "Microsoft.Common.TextBlock",
-                                "options": {
-                                    "text": "Identifies admin privileges/roles assignment.\n\nSource Action: Assign a user with any Admin role / privileges.\n\n*Data Sources: Linux Agent - Syslog*"
-                                }
-                            }
-                        ]
-                    },
-                    {
-                        "name": "analytic19",
-                        "type": "Microsoft.Common.Section",
-                        "label": "(Preview) SAP - High - HANA DB - User Admin actions",
-                        "elements": [
-                            {
-                                "name": "analytic19-text",
-                                "type": "Microsoft.Common.TextBlock",
-                                "options": {
-                                    "text": "Identifies user administration actions.\n\nSouirce Action: Create/Update/Delete a DB User.\n\n*Data Sources: Linux Agent - Syslog*"
-                                }
-                            }
-                        ]
-                    },
-                    {
-                        "name": "analytic20",
-                        "type": "Microsoft.Common.Section",
-                        "label": "(Preview) SAP - High - HANA DB - Audit Trail Policy Changes",
-                        "elements": [
-                            {
-                                "name": "analytic20-text",
-                                "type": "Microsoft.Common.TextBlock",
-                                "options": {
-                                    "text": "Identifies changes for HANA DB audit trail policies.\n\nSource Action: Create / update existing audit policy in security definitions.\n\n*Data Sources: Linux Agent - Syslog*"
-                                }
-                            }
-                        ]
-                    },
-                    {
-                        "name": "analytic21",
-                        "type": "Microsoft.Common.Section",
-                        "label": "(Preview) SAP - High - HANA DB - Deactivation of Audit Trail",
-                        "elements": [
-                            {
-                                "name": "analytic21-text",
-                                "type": "Microsoft.Common.TextBlock",
-                                "options": {
-                                    "text": "Identifies deactivation of HANA DB audit log.\n\nSource Action: Deactivate Audit Log in HANA DB security defnitions.\n\n*Data Sources: Linux Agent - Syslog*"
-                                }
-                            }
-                        ]
-                    },
-                    {
-                        "name": "analytic22",
-                        "type": "Microsoft.Common.Section",
-                        "label": "(Preview) SAP - Medium - Debugging Activities",
-                        "elements": [
-                            {
-                                "name": "analytic22-text",
-                                "type": "Microsoft.Common.TextBlock",
-                                "options": {
-                                    "text": "Identifies all debugging related activities.\n\nSource Action: Activate Debug (\"/h\") in system, debug an active process, add breakpoint to source code etc.\n\n**Recommended for Production only**\n\n*Data Sources: SAPcon -  Audit Log*"
-                                }
-                            }
-                        ]
-                    },
-                    {
-                        "name": "analytic23",
-                        "type": "Microsoft.Common.Section",
-                        "label": "(Preview) SAP - High - Data has Changed during Debugging Activity",
-                        "elements": [
-                            {
-                                "name": "analytic23-text",
-                                "type": "Microsoft.Common.TextBlock",
-                                "options": {
-                                    "text": "Identifies changes for runtime data during a debugging activity.\nSource Action: Activate Debug (\"/h\"), Select a field for change and update it's value.\n\n**Recommended for Production only**\n\n*Data Sources: SAPcon -  Audit Log*"
-                                }
-                            }
-                        ]
-                    },
-                    {
-                        "name": "analytic24",
-                        "type": "Microsoft.Common.Section",
-                        "label": "(Preview) SAP - High - System Configuration Change",
-                        "elements": [
-                            {
-                                "name": "analytic24-text",
-                                "type": "Microsoft.Common.TextBlock",
-                                "options": {
-                                    "text": "Identifies changes for system configuration. \n\nSource Action:  Adapt system change options or software components modifcation using SE06 transaction code.\n\n*Data Sources: SAPcon -  Audit Log*"
-                                }
-                            }
-                        ]
-                    },
-                    {
-                        "name": "analytic25",
+                        "name": "analytic3",
                         "type": "Microsoft.Common.Section",
                         "label": "(Preview) SAP - High - Client Configuration Change",
                         "elements": [
                             {
-                                "name": "analytic25-text",
+                                "name": "analytic3-text",
                                 "type": "Microsoft.Common.TextBlock",
                                 "options": {
                                     "text": "Identifies changes for client configuration such as: Client role, Changes recording mode. \n\nSource Action:  Perofrm client configurations changes using SCC4 transaction code. \n\n*Data Sources: SAPcon -  Audit Log*"
@@ -495,12 +265,222 @@
                         ]
                     },
                     {
-                        "name": "analytic26",
+                        "name": "analytic4",
+                        "type": "Microsoft.Common.Section",
+                        "label": "(Preview) SAP - High - Data has Changed during Debugging Activity",
+                        "elements": [
+                            {
+                                "name": "analytic4-text",
+                                "type": "Microsoft.Common.TextBlock",
+                                "options": {
+                                    "text": "Identifies changes for runtime data during a debugging activity.\nSource Action: Activate Debug (\"/h\"), Select a field for change and update it's value.\n\n**Recommended for Production only**\n\n*Data Sources: SAPcon -  Audit Log*"
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "name": "analytic5",
+                        "type": "Microsoft.Common.Section",
+                        "label": "(Preview) SAP - High - Deactivation of Security Audit Log",
+                        "elements": [
+                            {
+                                "name": "analytic5-text",
+                                "type": "Microsoft.Common.TextBlock",
+                                "options": {
+                                    "text": "Identifies deactivation of Security Audit Log\n\nSource Action: Disable secruity Audit Log using SM19/RSAU_CONFIG.\n\n*Data Sources: SAPcon -  Audit Log*"
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "name": "analytic6",
+                        "type": "Microsoft.Common.Section",
+                        "label": "(Preview) SAP - High - Execution of a Sensitive ABAP Program",
+                        "elements": [
+                            {
+                                "name": "analytic6-text",
+                                "type": "Microsoft.Common.TextBlock",
+                                "options": {
+                                    "text": "Identifies direct execution of a sensitive ABAP program. \n\nSource Action: Execute a program directly using SE38/SA38/SE80.\n\n**Recommended for Production only**\n\nABAP Programs should be maintained in watchlist \"SAP - Sensitive ABAP Programs\"\n\n*Data Sources: SAPcon -  Audit Log*"
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "name": "analytic7",
+                        "type": "Microsoft.Common.Section",
+                        "label": "(Preview) SAP - High - Execution of a Sensitive Transaction Code",
+                        "elements": [
+                            {
+                                "name": "analytic7-text",
+                                "type": "Microsoft.Common.TextBlock",
+                                "options": {
+                                    "text": "Identifies execution of a sensitive Transaction Code.\n\nSource Action: Execute a sensitive Transaction Code.\n\n**Recommended for Production only**\n\nTransaction Codes should be maintained in watchlist \"\"SAP - Sensitive Transaction Codes\"\"\n\n*Data Sources: SAPcon -  Audit Log*"
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "name": "analytic8",
+                        "type": "Microsoft.Common.Section",
+                        "label": "(Preview) SAP - High - Execution of Sensitive Function Module",
+                        "elements": [
+                            {
+                                "name": "analytic8-text",
+                                "type": "Microsoft.Common.TextBlock",
+                                "options": {
+                                    "text": "Identifies execution of a sensitive ABAP Function Module.\n\nSource Action: Execute a sensitive function module directly using SE37.\n\n**Recommended for Production only**\n\nSensitive functions should be maintained in \"SAP - Sensitive Function Modules\" Watchlist.\nTable logging changes should be activated for table \"EUFUNC\" in backend. (SE13)\n\n*Data Sources: SAPcon -  Table Data Log*"
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "name": "analytic9",
+                        "type": "Microsoft.Common.Section",
+                        "label": "(Preview) SAP - High - Function Module tested",
+                        "elements": [
+                            {
+                                "name": "analytic9-text",
+                                "type": "Microsoft.Common.TextBlock",
+                                "options": {
+                                    "text": "Identifies testing of a function module.\n\nSource Action: Test a function module using  SE37 / SE80.\n\n**Recommended for Production only**\n\n*Data Sources: SAPcon -  Audit Log*"
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "name": "analytic10",
+                        "type": "Microsoft.Common.Section",
+                        "label": "(Preview) SAP - High - HANA DB - Assign Admin Authorizations",
+                        "elements": [
+                            {
+                                "name": "analytic10-text",
+                                "type": "Microsoft.Common.TextBlock",
+                                "options": {
+                                    "text": "Identifies admin privileges/roles assignment.\n\nSource Action: Assign a user with any Admin role / privileges.\n\n*Data Sources: Linux Agent - Syslog*"
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "name": "analytic11",
+                        "type": "Microsoft.Common.Section",
+                        "label": "(Preview) SAP - High - HANA DB - Audit Trail Policy Changes",
+                        "elements": [
+                            {
+                                "name": "analytic11-text",
+                                "type": "Microsoft.Common.TextBlock",
+                                "options": {
+                                    "text": "Identifies changes for HANA DB audit trail policies.\n\nSource Action: Create / update existing audit policy in security definitions.\n\n*Data Sources: Linux Agent - Syslog*"
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "name": "analytic12",
+                        "type": "Microsoft.Common.Section",
+                        "label": "(Preview) SAP - High - HANA DB - Deactivation of Audit Trail",
+                        "elements": [
+                            {
+                                "name": "analytic12-text",
+                                "type": "Microsoft.Common.TextBlock",
+                                "options": {
+                                    "text": "Identifies deactivation of HANA DB audit log.\n\nSource Action: Deactivate Audit Log in HANA DB security defnitions.\n\n*Data Sources: Linux Agent - Syslog*"
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "name": "analytic13",
+                        "type": "Microsoft.Common.Section",
+                        "label": "(Preview) SAP - High - HANA DB - User Admin actions",
+                        "elements": [
+                            {
+                                "name": "analytic13-text",
+                                "type": "Microsoft.Common.TextBlock",
+                                "options": {
+                                    "text": "Identifies user administration actions.\n\nSouirce Action: Create/Update/Delete a DB User.\n\n*Data Sources: Linux Agent - Syslog*"
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "name": "analytic14",
+                        "type": "Microsoft.Common.Section",
+                        "label": "(Preview) SAP - High - Login from unexpected network",
+                        "elements": [
+                            {
+                                "name": "analytic14-text",
+                                "type": "Microsoft.Common.TextBlock",
+                                "options": {
+                                    "text": "Identifies logons from an unexpected network.\n\nSource Action: Logon to the backend system from an IP address which is not assigned to one of the netwroks.\n\nNetworks should be maintained in watchlist \"SAP - Networks\"\n\n*Data Sources: SAPcon -  Audit Log*"
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "name": "analytic15",
+                        "type": "Microsoft.Common.Section",
+                        "label": "(Preview) SAP - High - New ICF Service Handlers",
+                        "elements": [
+                            {
+                                "name": "analytic15-text",
+                                "type": "Microsoft.Common.TextBlock",
+                                "options": {
+                                    "text": "Identifies creation of ICF Handlers.\nSource Action: Assign a new handler to a service using SICF.\n*Data Sources: SAPcon - Table Data Log*"
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "name": "analytic16",
+                        "type": "Microsoft.Common.Section",
+                        "label": "(Preview) SAP - High - New ICF Services",
+                        "elements": [
+                            {
+                                "name": "analytic16-text",
+                                "type": "Microsoft.Common.TextBlock",
+                                "options": {
+                                    "text": "Identifies creation of ICF Services.\nSource Action: Create a service using SICF.\n*Data Sources: SAPcon - Table Data Log*"
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "name": "analytic17",
+                        "type": "Microsoft.Common.Section",
+                        "label": "(Preview) SAP - High - RFC Execution of a Sensitive Function Module",
+                        "elements": [
+                            {
+                                "name": "analytic17-text",
+                                "type": "Microsoft.Common.TextBlock",
+                                "options": {
+                                    "text": "Identifies execution of a sensitive function module using RFC.\n\nSource Action: Execute a function module using RFC.\n\n**Recommended for Production only**\n\nFunction Modules should be maintained in watchlist \"SAP - Sensitive Function Modules\"\n\n*Data Sources: SAPcon -  Audit Log*"
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "name": "analytic18",
+                        "type": "Microsoft.Common.Section",
+                        "label": "(Preview) SAP - High - Sensitive privileged user logged in",
+                        "elements": [
+                            {
+                                "name": "analytic18-text",
+                                "type": "Microsoft.Common.TextBlock",
+                                "options": {
+                                    "text": "Identifies Dialog logon of a sensitive privileged user. \n\nSource Action: Logon to the backend system using SAP* or anoter privileged user.\n\nPriveleged users should be maintained in \"SAP - Privileged Users\" Watchlist\n\n*Data Sources: SAPcon -  Audit Log*"
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "name": "analytic19",
                         "type": "Microsoft.Common.Section",
                         "label": "(Preview) SAP - High - Sensitive privileged user makes a change in other user",
                         "elements": [
                             {
-                                "name": "analytic26-text",
+                                "name": "analytic19-text",
                                 "type": "Microsoft.Common.TextBlock",
                                 "options": {
                                     "text": "Identifies changes  of sensitive privileged users in other users.\n\nSource Action: Change user details / authorizations using SU01.\n\nPriveleged users should be maintained in \"SAP - Privileged Users\" Watchlist\n\n*Data Sources: SAPcon -  Audit Log*"
@@ -509,15 +489,113 @@
                         ]
                     },
                     {
+                        "name": "analytic20",
+                        "type": "Microsoft.Common.Section",
+                        "label": "(Preview) SAP - High - Sensitive Users Password Change and Login",
+                        "elements": [
+                            {
+                                "name": "analytic20-text",
+                                "type": "Microsoft.Common.TextBlock",
+                                "options": {
+                                    "text": "Identifies password changes for privileged users.\n\nSource Action: Change Password for a user and login to the system.\n\nPriveleged users should be maintained in \"SAP - Privileged Users\" Watchlist\n\n*Data Sources: SAPcon -  Audit Log*"
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "name": "analytic21",
+                        "type": "Microsoft.Common.Section",
+                        "label": "(Preview) SAP - High - SPNego Attack",
+                        "elements": [
+                            {
+                                "name": "analytic21-text",
+                                "type": "Microsoft.Common.TextBlock",
+                                "options": {
+                                    "text": "Identifies SPNego Replay Attack.\n\n*Data Sources: SAPcon -  Audit Log*"
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "name": "analytic22",
+                        "type": "Microsoft.Common.Section",
+                        "label": "(Preview) SAP - High - System Configuration Change",
+                        "elements": [
+                            {
+                                "name": "analytic22-text",
+                                "type": "Microsoft.Common.TextBlock",
+                                "options": {
+                                    "text": "Identifies changes for system configuration. \n\nSource Action:  Adapt system change options or software components modifcation using SE06 transaction code.\n\n*Data Sources: SAPcon -  Audit Log*"
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "name": "analytic23",
+                        "type": "Microsoft.Common.Section",
+                        "label": "(Preview) SAP - High - User Creates and uses new user",
+                        "elements": [
+                            {
+                                "name": "analytic23-text",
+                                "type": "Microsoft.Common.TextBlock",
+                                "options": {
+                                    "text": "Identifies a user creating and using other users.\n\nSource Action: Create a user using SU01. Login using the newly created user from the same IP.\n\n*Data Sources: SAPcon -  Audit Log*"
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "name": "analytic24",
+                        "type": "Microsoft.Common.Section",
+                        "label": "(Preview) SAP - High - User Unlocks and uses other users",
+                        "elements": [
+                            {
+                                "name": "analytic24-text",
+                                "type": "Microsoft.Common.TextBlock",
+                                "options": {
+                                    "text": "Identifies a user unlock and usage by other users.\n\nSource Action: Unlock a user using SU01. Login using the unlocked user from the same IP.\n\n*Data Sources: SAPcon -  Audit Log*\n*Data Sources: SAPcon -  Change Documents Log*"
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "name": "analytic25",
+                        "type": "Microsoft.Common.Section",
+                        "label": "(Preview) SAP - Medium - Assignment of a sensitive profile",
+                        "elements": [
+                            {
+                                "name": "analytic25-text",
+                                "type": "Microsoft.Common.TextBlock",
+                                "options": {
+                                    "text": "Identifies new assignments of a sensitive profile to a user.\n\nSource Action: Assign a profile to a User using SU01.\n\nSensitive profiles should be maintained in watchlist \"SAP - Sensitive Profiles\"\n\n*Data Sources: SAPcon -  Change Documents Log*\n"
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "name": "analytic26",
+                        "type": "Microsoft.Common.Section",
+                        "label": "(Preview) SAP - Medium - Assignment of a sensitive role",
+                        "elements": [
+                            {
+                                "name": "analytic26-text",
+                                "type": "Microsoft.Common.TextBlock",
+                                "options": {
+                                    "text": "Identifies new assignments for a sensitive role to a user.\n\nSource Action: Assign a role to a User using SU01 / PFCG.\n\nSensitive roles should be maintained in watchlist \"SAP -  Sensitive Roles\"\n\n*Data Sources: SAPcon -  Change Documents Log, Audit Log*"
+                                }
+                            }
+                        ]
+                    },
+                    {
                         "name": "analytic27",
                         "type": "Microsoft.Common.Section",
-                        "label": "(Preview) SAP - Medium - Critical authorizations assignment - New User Assignment",
+                        "label": "(Preview) SAP - Medium - Brute force attacks",
                         "elements": [
                             {
                                 "name": "analytic27-text",
                                 "type": "Microsoft.Common.TextBlock",
                                 "options": {
-                                    "text": "Identifies assignment of a critical authorization object value to a new user.\n\nSource Action: Assign a new user to a role which holds critical authorization values using SU01/PFCG.\n\nCritical authorization objects should be maintained in watchlist \"\"SAP - Critical Authorization Objects\"\"\n\n*Data Sources: SAPcon -  Change Documents Log*"
+                                    "text": "Identifies brute force attacks on SAP system according to failed logon attempts for the backend system.\n\nSource Action: Attempt to login from the same IP to several systems/clients within the scheduled time interval.\n\n*Data Sources: SAPcon -  Audit Log*"
                                 }
                             }
                         ]
@@ -539,13 +617,13 @@
                     {
                         "name": "analytic29",
                         "type": "Microsoft.Common.Section",
-                        "label": "(Preview) SAP - Medium - Multiple Files Download",
+                        "label": "(Preview) SAP - Medium - Critical authorizations assignment - New User Assignment",
                         "elements": [
                             {
                                 "name": "analytic29-text",
                                 "type": "Microsoft.Common.TextBlock",
                                 "options": {
-                                    "text": "Identifies multiple files downloads for a user within a specific timerange.\n\nSource Action: Download multiple files while using SAPGui to Excel/Lists etc.\n\n*Data Sources: SAPcon -  Audit Log*"
+                                    "text": "Identifies assignment of a critical authorization object value to a new user.\n\nSource Action: Assign a new user to a role which holds critical authorization values using SU01/PFCG.\n\nCritical authorization objects should be maintained in watchlist \"\"SAP - Critical Authorization Objects\"\"\n\n*Data Sources: SAPcon -  Change Documents Log*"
                                 }
                             }
                         ]
@@ -553,13 +631,13 @@
                     {
                         "name": "analytic30",
                         "type": "Microsoft.Common.Section",
-                        "label": "(Preview) SAP - Medium - Multiple Spool Executions",
+                        "label": "(Preview) SAP - Medium - Debugging Activities",
                         "elements": [
                             {
                                 "name": "analytic30-text",
                                 "type": "Microsoft.Common.TextBlock",
                                 "options": {
-                                    "text": "Identifies multiple spools for a user within a specific timerange.\n\nSource Action: Create and execute multiple Spool Jobs from any type by a user. (SP01)\n\n*Data Sources: SAPcon -  Spool Log*"
+                                    "text": "Identifies all debugging related activities.\n\nSource Action: Activate Debug (\"/h\") in system, debug an active process, add breakpoint to source code etc.\n\n**Recommended for Production only**\n\n*Data Sources: SAPcon -  Audit Log*"
                                 }
                             }
                         ]
@@ -567,220 +645,10 @@
                     {
                         "name": "analytic31",
                         "type": "Microsoft.Common.Section",
-                        "label": "(Preview) SAP - Medium - Multiple Spool Output Executions",
-                        "elements": [
-                            {
-                                "name": "analytic31-text",
-                                "type": "Microsoft.Common.TextBlock",
-                                "options": {
-                                    "text": "Identifies multiple spools for a user within a specific timerange.\n\nSource Action: Create and execute multiple Spool Jobs from any type by a user. (SP01)\n\n*Data Sources: SAPcon -  Spool Log*"
-                                }
-                            }
-                        ]
-                    },
-                    {
-                        "name": "analytic32",
-                        "type": "Microsoft.Common.Section",
-                        "label": "(Preview) SAP - Medium - Spool Takeover",
-                        "elements": [
-                            {
-                                "name": "analytic32-text",
-                                "type": "Microsoft.Common.TextBlock",
-                                "options": {
-                                    "text": "Identifies a user printing a spool request which was created by someone else.\n\nSource Action: Create a Spool Request using one user, Output it in using another user.\n\n*Data Sources: SAPcon -  Spool Log*\n*Data Sources: SAPcon -  Spool Output Log*"
-                                }
-                            }
-                        ]
-                    },
-                    {
-                        "name": "analytic33",
-                        "type": "Microsoft.Common.Section",
-                        "label": "(Preview) SAP - High - User Creates and uses new user",
-                        "elements": [
-                            {
-                                "name": "analytic33-text",
-                                "type": "Microsoft.Common.TextBlock",
-                                "options": {
-                                    "text": "Identifies a user creating and using other users.\n\nSource Action: Create a user using SU01. Login using the newly created user from the same IP.\n\n*Data Sources: SAPcon -  Audit Log*"
-                                }
-                            }
-                        ]
-                    },
-                    {
-                        "name": "analytic34",
-                        "type": "Microsoft.Common.Section",
-                        "label": "(Preview) SAP - High - User Unlocks and uses other users",
-                        "elements": [
-                            {
-                                "name": "analytic34-text",
-                                "type": "Microsoft.Common.TextBlock",
-                                "options": {
-                                    "text": "Identifies a user unlock and usage by other users.\n\nSource Action: Unlock a user using SU01. Login using the unlocked user from the same IP.\n\n*Data Sources: SAPcon -  Audit Log*\n*Data Sources: SAPcon -  Change Documents Log*"
-                                }
-                            }
-                        ]
-                    },
-                    {
-                        "name": "analytic35",
-                        "type": "Microsoft.Common.Section",
-                        "label": "(Preview) SAP - Medium - Sensitive Tables Direct Access By RFC Logon",
-                        "elements": [
-                            {
-                                "name": "analytic35-text",
-                                "type": "Microsoft.Common.TextBlock",
-                                "options": {
-                                    "text": "Identifies generic table access by RFC logon\n\nSource Action: Open table contents using SE11/SE16/SE16N.\n\n**Recommended for Production only**\n\nTables should be maintained in \"SAP - Sensitive Tables\" Watchlist.\n\n*Data Sources: SAPcon -  Audit Log*"
-                                }
-                            }
-                        ]
-                    },
-                    {
-                        "name": "analytic36",
-                        "type": "Microsoft.Common.Section",
-                        "label": "(Preview) SAP - High - Sensitive Users Password Change and Login",
-                        "elements": [
-                            {
-                                "name": "analytic36-text",
-                                "type": "Microsoft.Common.TextBlock",
-                                "options": {
-                                    "text": "Identifies password changes for privileged users.\n\nSource Action: Change Password for a user and login to the system.\n\nPriveleged users should be maintained in \"SAP - Privileged Users\" Watchlist\n\n*Data Sources: SAPcon -  Audit Log*"
-                                }
-                            }
-                        ]
-                    },
-                    {
-                        "name": "analytic37",
-                        "type": "Microsoft.Common.Section",
-                        "label": "(Preview) SAP - Medium - Insecure FTP servers configuration",
-                        "elements": [
-                            {
-                                "name": "analytic37-text",
-                                "type": "Microsoft.Common.TextBlock",
-                                "options": {
-                                    "text": " Identifies Insecure FTP servers configuration - FTP Whitelist is empty / Contains Placeholders.\n\nSource Action: Do not maintain / maintain values which contains placeholders in table SAPFTP_SERVERS using maintenance view SAPFTP_SERVERS_V. (SM30)\n\n*Data Sources: SAPcon -  Audit Log*"
-                                }
-                            }
-                        ]
-                    },
-                    {
-                        "name": "analytic38",
-                        "type": "Microsoft.Common.Section",
-                        "label": "(Preview) SAP - Medium - FTP for non authorized servers",
-                        "elements": [
-                            {
-                                "name": "analytic38-text",
-                                "type": "Microsoft.Common.TextBlock",
-                                "options": {
-                                    "text": "Identifies FTP connection for non authorized server.\nMaintain new Watchlist, similar to SAPFTP_SERVERS \nSource Action: Create a new FTP connection e.g. by using Function Module FTP_CONNECT.\n\n*Data Sources: SAPcon -  Audit Log*"
-                                }
-                            }
-                        ]
-                    },
-                    {
-                        "name": "analytic39",
-                        "type": "Microsoft.Common.Section",
-                        "label": "(Preview) SAP - Low - Dynamic ABAP Program",
-                        "elements": [
-                            {
-                                "name": "analytic39-text",
-                                "type": "Microsoft.Common.TextBlock",
-                                "options": {
-                                    "text": "Identifies execution of dynamic ABAP programming. For example, ABAP code was dynamically created/changed/deleted. Source Action: Create an ABAP Report which uses ABAP program generation commands such as \"INSERT REPORT\" and execute it. Excluded Transaction Codes can be maintained in \"SAP - Transactions for ABAP Generations\" watchlist. *Data Sources: SAPcon - Audit Log*"
-                                }
-                            }
-                        ]
-                    },
-                    {
-                        "name": "analytic40",
-                        "type": "Microsoft.Common.Section",
-                        "label": "(Preview) SAP - Low - Dynamic RFC Destination",
-                        "elements": [
-                            {
-                                "name": "analytic40-text",
-                                "type": "Microsoft.Common.TextBlock",
-                                "options": {
-                                    "text": "Identifies execution of RFC using dynamic destinations. Source Action: Execute an ABAP report which is using dynamic destinations (cl_dynamic_destination). Sample report: DEMO_RFC_DYNAMIC_DEST. *Data Sources: SAPcon - Audit Log*"
-                                }
-                            }
-                        ]
-                    },
-                    {
-                        "name": "analytic41",
-                        "type": "Microsoft.Common.Section",
-                        "label": "(Preview) SAP - High - SPNego Attack",
-                        "elements": [
-                            {
-                                "name": "analytic41-text",
-                                "type": "Microsoft.Common.TextBlock",
-                                "options": {
-                                    "text": "Identifies SPNego Replay Attack.\n\n*Data Sources: SAPcon -  Audit Log*"
-                                }
-                            }
-                        ]
-                    },
-                    {
-                        "name": "analytic42",
-                        "type": "Microsoft.Common.Section",
-                        "label": "(Preview) SAP - Medium - Sensitive Roles Changes",
-                        "elements": [
-                            {
-                                "name": "analytic42-text",
-                                "type": "Microsoft.Common.TextBlock",
-                                "options": {
-                                    "text": "Identifies changes in sensitive roles. \nSource Action: Change a role using PFCG.\nSensitive roles should be maintained in \"SAP - Sensitive Roles\" Watchlist\n\n*Data Sources: SAPcon - Change Documents Log*"
-                                }
-                            }
-                        ]
-                    },
-                    {
-                        "name": "analytic43",
-                        "type": "Microsoft.Common.Section",
-                        "label": "(Preview) SAP - Medium - Execution of Obsolete/Insecure Program",
-                        "elements": [
-                            {
-                                "name": "analytic43-text",
-                                "type": "Microsoft.Common.TextBlock",
-                                "options": {
-                                    "text": "Identifies execution of an obsolete/insecure ABAP program.\nSource Action: Execute a program directly using SE38/SA38/SE80 or by using a background job.\n**Recommended for Production only**\nObsolete programs should be maintained in \"SAP - Obsolete Programs\" Watchlist\n*Data Sources: SAPcon -  Audit Log*"
-                                }
-                            }
-                        ]
-                    },
-                    {
-                        "name": "analytic44",
-                        "type": "Microsoft.Common.Section",
-                        "label": "(Preview) SAP - Informational - Lifecycle - SAP Notes were implemented in system",
-                        "elements": [
-                            {
-                                "name": "analytic44-text",
-                                "type": "Microsoft.Common.TextBlock",
-                                "options": {
-                                    "text": "Identifies SAP Notes implementation in the system.\n\nSource Action: Implement SAP Note using SNOTE/TCI.\n\n*Data Sources: SAPcon -  Change Requests*"
-                                }
-                            }
-                        ]
-                    },
-                    {
-                        "name": "analytic45",
-                        "type": "Microsoft.Common.Section",
                         "label": "(Preview) SAP - Medium - Execution of Obsolete or Insecure Function Module",
                         "elements": [
                             {
-                                "name": "analytic45-text",
-                                "type": "Microsoft.Common.TextBlock",
-                                "options": {
-                                    "text": "Identifies execution of an obsolete/insecure ABAP program.\n\nSource Action: Execute a program directly using SE38/SA38/SE80 or by using a background job.\n\n**Recommended for Production only**\n\nObsolete programs should be maintained in \"SAP - Obsolete Programs\" Watchlist\n\n*Data Sources: SAPcon -  Audit Log*"
-                                }
-                            }
-                        ]
-                    },
-                    {
-                        "name": "analytic46",
-                        "type": "Microsoft.Common.Section",
-                        "label": "(Preview) SAP - High - Execution of Sensitive Function Module",
-                        "elements": [
-                            {
-                                "name": "analytic46-text",
+                                "name": "analytic31-text",
                                 "type": "Microsoft.Common.TextBlock",
                                 "options": {
                                     "text": "Identifies execution of an obsolete/insecure ABAP Function Module.\n\nSource Action: Execute an obsolete/insecure function module directly using SE37.\n\n**Recommended for Production only**\n\nObsolete functions should be maintained in \"SAP - Obsolete Function Modules\" Watchlist.\nTable logging changes should be activated for table \"EUFUNC\" in backend. (SE13)\n\n*Data Sources: SAPcon -  Table Data Log*"
@@ -789,15 +657,225 @@
                         ]
                     },
                     {
+                        "name": "analytic32",
+                        "type": "Microsoft.Common.Section",
+                        "label": "(Preview) SAP - Medium - Execution of Obsolete/Insecure Program",
+                        "elements": [
+                            {
+                                "name": "analytic32-text",
+                                "type": "Microsoft.Common.TextBlock",
+                                "options": {
+                                    "text": "Identifies execution of an obsolete/insecure ABAP program.\nSource Action: Execute a program directly using SE38/SA38/SE80 or by using a background job.\n**Recommended for Production only**\nObsolete programs should be maintained in \"SAP - Obsolete Programs\" Watchlist\n*Data Sources: SAPcon -  Audit Log*"
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "name": "analytic33",
+                        "type": "Microsoft.Common.Section",
+                        "label": "(Preview) SAP - Medium - FTP for non authorized servers",
+                        "elements": [
+                            {
+                                "name": "analytic33-text",
+                                "type": "Microsoft.Common.TextBlock",
+                                "options": {
+                                    "text": "Identifies FTP connection for non authorized server.\nMaintain new Watchlist, similar to SAPFTP_SERVERS \nSource Action: Create a new FTP connection e.g. by using Function Module FTP_CONNECT.\n\n*Data Sources: SAPcon -  Audit Log*"
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "name": "analytic34",
+                        "type": "Microsoft.Common.Section",
+                        "label": "(Preview) SAP - Medium - Insecure FTP servers configuration",
+                        "elements": [
+                            {
+                                "name": "analytic34-text",
+                                "type": "Microsoft.Common.TextBlock",
+                                "options": {
+                                    "text": " Identifies Insecure FTP servers configuration - FTP Whitelist is empty / Contains Placeholders.\n\nSource Action: Do not maintain / maintain values which contains placeholders in table SAPFTP_SERVERS using maintenance view SAPFTP_SERVERS_V. (SM30)\n\n*Data Sources: SAPcon -  Audit Log*"
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "name": "analytic35",
+                        "type": "Microsoft.Common.Section",
+                        "label": "(Preview) SAP - Medium - Multiple Files Download",
+                        "elements": [
+                            {
+                                "name": "analytic35-text",
+                                "type": "Microsoft.Common.TextBlock",
+                                "options": {
+                                    "text": "Identifies multiple files downloads for a user within a specific timerange.\n\nSource Action: Download multiple files while using SAPGui to Excel/Lists etc.\n\n*Data Sources: SAPcon -  Audit Log*"
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "name": "analytic36",
+                        "type": "Microsoft.Common.Section",
+                        "label": "(Preview) SAP - Medium - Multiple Logons by IP",
+                        "elements": [
+                            {
+                                "name": "analytic36-text",
+                                "type": "Microsoft.Common.TextBlock",
+                                "options": {
+                                    "text": "Identifies logon of several users from same IP within scheduled time interval.\n\nSource Action: Logon using several users thorugh the same IP.\n\n*Data Sources: SAPcon -  Audit Log*"
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "name": "analytic37",
+                        "type": "Microsoft.Common.Section",
+                        "label": "(Preview) SAP - Medium - Multiple Logons by User",
+                        "elements": [
+                            {
+                                "name": "analytic37-text",
+                                "type": "Microsoft.Common.TextBlock",
+                                "options": {
+                                    "text": "Identifies logon of the same user from several terminals within scheduled time interval.\n\nSource Action: Logon using the same user thorugh different IP's.\n\n*Data Sources: SAPcon -  Audit Log*"
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "name": "analytic38",
+                        "type": "Microsoft.Common.Section",
+                        "label": "(Preview) SAP - Medium - Multiple Spool Executions",
+                        "elements": [
+                            {
+                                "name": "analytic38-text",
+                                "type": "Microsoft.Common.TextBlock",
+                                "options": {
+                                    "text": "Identifies multiple spools for a user within a specific timerange.\n\nSource Action: Create and execute multiple Spool Jobs from any type by a user. (SP01)\n\n*Data Sources: SAPcon -  Spool Log*"
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "name": "analytic39",
+                        "type": "Microsoft.Common.Section",
+                        "label": "(Preview) SAP - Medium - Multiple Spool Output Executions",
+                        "elements": [
+                            {
+                                "name": "analytic39-text",
+                                "type": "Microsoft.Common.TextBlock",
+                                "options": {
+                                    "text": "Identifies multiple spools for a user within a specific timerange.\n\nSource Action: Create and execute multiple Spool Jobs from any type by a user. (SP01)\n\n*Data Sources: SAPcon -  Spool Log*"
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "name": "analytic40",
+                        "type": "Microsoft.Common.Section",
+                        "label": "(Preview) SAP - Medium - Security Audit Log Configuration Change",
+                        "elements": [
+                            {
+                                "name": "analytic40-text",
+                                "type": "Microsoft.Common.TextBlock",
+                                "options": {
+                                    "text": "Idenitifes changes for configuration in Securiy Audit Log\n\nSource Action: change any  Security Audit Log Configuration using SM19/RSAU_CONFIG. (Filters/Status/Recording mode etc..)\n\n*Data Sources: SAPcon -  Audit Log*"
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "name": "analytic41",
+                        "type": "Microsoft.Common.Section",
+                        "label": "(Preview) SAP - Medium - Sensitive Roles Changes",
+                        "elements": [
+                            {
+                                "name": "analytic41-text",
+                                "type": "Microsoft.Common.TextBlock",
+                                "options": {
+                                    "text": "Identifies changes in sensitive roles. \nSource Action: Change a role using PFCG.\nSensitive roles should be maintained in \"SAP - Sensitive Roles\" Watchlist\n\n*Data Sources: SAPcon - Change Documents Log*"
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "name": "analytic42",
+                        "type": "Microsoft.Common.Section",
+                        "label": "(Preview) SAP - Medium - Sensitive Tables Direct Access By RFC Logon",
+                        "elements": [
+                            {
+                                "name": "analytic42-text",
+                                "type": "Microsoft.Common.TextBlock",
+                                "options": {
+                                    "text": "Identifies generic table access by RFC logon\n\nSource Action: Open table contents using SE11/SE16/SE16N.\n\n**Recommended for Production only**\n\nTables should be maintained in \"SAP - Sensitive Tables\" Watchlist.\n\n*Data Sources: SAPcon -  Audit Log*"
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "name": "analytic43",
+                        "type": "Microsoft.Common.Section",
+                        "label": "(Preview) SAP - Medium - Spool Takeover",
+                        "elements": [
+                            {
+                                "name": "analytic43-text",
+                                "type": "Microsoft.Common.TextBlock",
+                                "options": {
+                                    "text": "Identifies a user printing a spool request which was created by someone else.\n\nSource Action: Create a Spool Request using one user, Output it in using another user.\n\n*Data Sources: SAPcon -  Spool Log*\n*Data Sources: SAPcon -  Spool Output Log*"
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "name": "analytic44",
+                        "type": "Microsoft.Common.Section",
+                        "label": "(Preview) SAP - Medium - Transaction is unlocked",
+                        "elements": [
+                            {
+                                "name": "analytic44-text",
+                                "type": "Microsoft.Common.TextBlock",
+                                "options": {
+                                    "text": "Identifies unlocking of a transaction. \n\nSource Action: Unlock a transaction code using SM01/SM01_DEV/SM01_CUS.\n\n*Data Sources: SAPcon -  Audit Log*\n"
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "name": "analytic45",
+                        "type": "Microsoft.Common.Section",
+                        "label": "(Preview) SAP - Low - Dynamic ABAP Program",
+                        "elements": [
+                            {
+                                "name": "analytic45-text",
+                                "type": "Microsoft.Common.TextBlock",
+                                "options": {
+                                    "text": "Identifies execution of dynamic ABAP programming. For example, ABAP code was dynamically created/changed/deleted. Source Action: Create an ABAP Report which uses ABAP program generation commands such as \"INSERT REPORT\" and execute it. Excluded Transaction Codes can be maintained in \"SAP - Transactions for ABAP Generations\" watchlist. *Data Sources: SAPcon - Audit Log*"
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "name": "analytic46",
+                        "type": "Microsoft.Common.Section",
+                        "label": "(Preview) SAP - Low - Dynamic RFC Destination",
+                        "elements": [
+                            {
+                                "name": "analytic46-text",
+                                "type": "Microsoft.Common.TextBlock",
+                                "options": {
+                                    "text": "Identifies execution of RFC using dynamic destinations. Source Action: Execute an ABAP report which is using dynamic destinations (cl_dynamic_destination). Sample report: DEMO_RFC_DYNAMIC_DEST. *Data Sources: SAPcon - Audit Log*"
+                                }
+                            }
+                        ]
+                    },
+                    {
                         "name": "analytic47",
                         "type": "Microsoft.Common.Section",
-                        "label": "(Preview) SAP - High - Activation or Deactivation of ICF Service",
+                        "label": "(Preview) SAP - Low - Multiple Password Changes by User",
                         "elements": [
                             {
                                 "name": "analytic47-text",
                                 "type": "Microsoft.Common.TextBlock",
                                 "options": {
-                                    "text": "Identifies activation or deactivation of ICF Services.\nSource Action: Activate or deactivate a service using SICF.\n*Data Sources: SAPcon - Table Data Log*"
+                                    "text": "Identifies multiple password changes by user.\n\nSource Action: Change user password\n\n*Data Sources: SAPcon -  Audit Log*"
                                 }
                             }
                         ]
@@ -805,13 +883,13 @@
                     {
                         "name": "analytic48",
                         "type": "Microsoft.Common.Section",
-                        "label": "(Preview) SAP - High - New ICF Services",
+                        "label": "(Preview) SAP - Low - Sensitive Tables Direct Access By Dialog Logon",
                         "elements": [
                             {
                                 "name": "analytic48-text",
                                 "type": "Microsoft.Common.TextBlock",
                                 "options": {
-                                    "text": "Identifies creation of ICF Services.\nSource Action: Create a service using SICF.\n*Data Sources: SAPcon - Table Data Log*"
+                                    "text": "Identifies generic table access by dialog logon\n\nSource Action: Open table contents using SE11/SE16/SE16N.\n\n**Recommended for Production only**\n\nTables should be maintained in \"\"SAP - Sensitive Tables\"\" Watchlist.\n\n*Data Sources: SAPcon -  Audit Log*"
                                 }
                             }
                         ]
@@ -819,13 +897,13 @@
                     {
                         "name": "analytic49",
                         "type": "Microsoft.Common.Section",
-                        "label": "(Preview) SAP - High - New ICF Service Handlers",
+                        "label": "(Preview) SAP - Informational - Lifecycle - SAP Notes were implemented in system",
                         "elements": [
                             {
                                 "name": "analytic49-text",
                                 "type": "Microsoft.Common.TextBlock",
                                 "options": {
-                                    "text": "Identifies creation of ICF Handlers.\nSource Action: Assign a new handler to a service using SICF.\n*Data Sources: SAPcon - Table Data Log*"
+                                    "text": "Identifies SAP Notes implementation in the system.\n\nSource Action: Implement SAP Note using SNOTE/TCI.\n\n*Data Sources: SAPcon -  Change Requests*"
                                 }
                             }
                         ]
@@ -1072,7 +1150,10 @@
             "workspace-location": "[basics('workspace').location]",
             "location": "[location()]",
             "workspace": "[basics('workspace').name]",
-            "workbook1-name": "[steps('workbooks').workbook1.workbook1-name]"
+            "workbook1-name": "[steps('workbooks').workbook1.workbook1-name]",
+            "workbook2-name": "[steps('workbooks').workbook2.workbook2-name]",
+            "workbook3-name": "[steps('workbooks').workbook3.workbook3-name]",
+            "workbook4-name": "[steps('workbooks').workbook4.workbook4-name]"
         }
     }
 }

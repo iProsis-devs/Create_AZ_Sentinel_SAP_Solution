@@ -11,6 +11,7 @@ directory = "Solution"
 zip_file_name = "sap1.2.20.zip"
 zip_file = os.getcwd() + "\\" + directory + "\\" + zip_file_name
 
+'''
 # Get Parameters From User
 print(colored("Please Enter Relevant Parameters to Import Alerts from Azure Sentinel Workspace.", "blue"))
 subscription = input("Please Enter Subscription: ")
@@ -19,6 +20,9 @@ workspace = input("Please Enter Workspace: ")
 
 # Import Alerts from Azure Sentinel Workspace
 ifs.import_alerts(subscription, resource_group, workspace)
+'''
+
+print(colored("Starting to create Azure Sentinel SAP Solution.", "blue"))
 # Remove Alerts ID(Imported Workspace)
 fis.fix_id()
 

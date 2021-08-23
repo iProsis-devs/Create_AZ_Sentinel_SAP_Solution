@@ -31,14 +31,6 @@
             "linkLabel": "Authentication & Authorization",
             "subTarget": "events",
             "style": "link"
-          },
-          {
-            "id": "76fa7104-87c5-474b-a687-9f9012e591dc",
-            "cellValue": "workbook-param",
-            "linkTarget": "parameter",
-            "linkLabel": "Alerts",
-            "subTarget": "alerts",
-            "style": "link"
           }
         ]
       },
@@ -155,7 +147,7 @@
           {
             "type": 1,
             "content": {
-              "json": "<tr><td><h1><B>Events Severity</b></h1>"
+              "json": "<tr><td><h2 style=\"font-family: 'Enriqueta', arial, serif; line-height: 1.25; margin: 0 0 10px; font-size: 24px; font-weight: bold;\"><B>Events Severity</b></h2>\r\n<tr><td><p style=\"color: #333; font-family: 'Muli', sans-serif; margin-bottom: 15px; font-size: 14px;\"><B>Showing data about events and their severity.</b></p>"
             },
             "conditionalVisibility": {
               "parameterName": "workbook-param",
@@ -242,7 +234,7 @@
                   "version": "KqlParameterItem/1.0",
                   "name": "User",
                   "type": 1,
-                  "value": "OR",
+                  "value": "",
                   "timeContext": {
                     "durationMs": 86400000
                   }
@@ -423,7 +415,7 @@
           {
             "type": 1,
             "content": {
-              "json": "<tr><td><h1><B>Authentication & Authorization</b></h1>"
+              "json": "<tr><td><h2 style=\"font-family: 'Enriqueta', arial, serif; line-height: 1.25; margin: 0 0 10px; font-size: 24px; font-weight: bold;\"><B>Authentication & Authorization</b></h2>\r\n<tr><td><p style=\"color: #333; font-family: 'Muli', sans-serif; margin-bottom: 15px; font-size: 14px;\"><B>Showing data about logins/logouts and user changes.</b></p>"
             },
             "name": "text - 4"
           },
@@ -431,7 +423,7 @@
             "type": 3,
             "content": {
               "version": "KqlItem/1.0",
-              "query": "ABAPAuditLog_CL \r\n| where TimeGenerated {TimeSelect}\r\n| where MessageID_s in('AU1','AU2','AUC') and (SystemID_s in ({Systems}) or  '*' in ({Systems})) \r\n| summarize  count() by bin(TimeGenerated,1d), MessageText_s",
+              "query": "ABAPAuditLog_CL \r\n| where TimeGenerated {TimeSelect}\r\n| where (SystemID_s in ({Systems}) or  '*' in ({Systems}))\r\n| where MessageID_s in('AU1','AU2','AUC') and (SystemID_s in ({Systems}) or  '*' in ({Systems})) \r\n| summarize  count() by bin(TimeGenerated,1d), MessageText_s",
               "size": 0,
               "showAnalytics": true,
               "title": "Logins and Logouts Over Time",
@@ -494,45 +486,6 @@
             },
             "customWidth": "100",
             "name": "Login & Logouts details"
-          },
-          {
-            "type": 3,
-            "content": {
-              "version": "KqlItem/1.0",
-              "query": "ABAPAuditLog_CL \r\n| where TimeGenerated {TimeSelect}\r\n| where (MessageID_s  =='AUE')  and (SystemID_s in ({Systems}) or  '*' in ({Systems})) \r\n| summarize count() by bin(TimeGenerated,1d), MessageText_s",
-              "size": 0,
-              "title": "Audit Configuration Changes",
-              "color": "orange",
-              "queryType": 0,
-              "resourceType": "microsoft.operationalinsights/workspaces",
-              "visualization": "linechart",
-              "tileSettings": {
-                "showBorder": false,
-                "titleContent": {
-                  "columnMatch": "MessageText_s",
-                  "formatter": 1
-                },
-                "leftContent": {
-                  "columnMatch": "count_",
-                  "formatter": 12,
-                  "formatOptions": {
-                    "palette": "auto"
-                  },
-                  "numberFormat": {
-                    "unit": 17,
-                    "options": {
-                      "maximumSignificantDigits": 3,
-                      "maximumFractionDigits": 2
-                    }
-                  }
-                }
-              },
-              "chartSettings": {
-                "showDataPoints": true
-              }
-            },
-            "customWidth": "100",
-            "name": "Audit Configuration Changes"
           },
           {
             "type": 3,
@@ -668,7 +621,7 @@
           {
             "type": 1,
             "content": {
-              "json": "<tr><td><h1><B>Health Overview</b></h1>"
+              "json": "<tr><td><h2 style=\"font-family: 'Enriqueta', arial, serif; line-height: 1.25; margin: 0 0 10px; font-size: 24px; font-weight: bold;\"><B>Health Overview</b></h2>\r\n<tr><td><p style=\"color: #333; font-family: 'Muli', sans-serif; margin-bottom: 15px; font-size: 14px;\"><B>Showing data about activity in the system</b></p>"
             },
             "name": "text - 1"
           },
@@ -681,7 +634,7 @@
               "title": "Users login over time",
               "color": "turquoise",
               "timeContext": {
-                "durationMs": 0
+                "durationMs": 7776000000
               },
               "timeContextFromParameter": "TimeSelect",
               "queryType": 0,
@@ -701,7 +654,7 @@
               "size": 0,
               "title": "Number of events ingested by system",
               "timeContext": {
-                "durationMs": 0
+                "durationMs": 7776000000
               },
               "timeContextFromParameter": "TimeSelect",
               "queryType": 0,
@@ -718,7 +671,7 @@
               "size": 0,
               "title": "Message class count",
               "timeContext": {
-                "durationMs": 0
+                "durationMs": 7776000000
               },
               "timeContextFromParameter": "TimeSelect",
               "queryType": 0,
@@ -735,7 +688,7 @@
               "size": 0,
               "title": "Message IDs count",
               "timeContext": {
-                "durationMs": 0
+                "durationMs": 7776000000
               },
               "timeContextFromParameter": "TimeSelect",
               "queryType": 0,
@@ -771,203 +724,10 @@
         "value": "general"
       },
       "name": "group - 4"
-    },
-    {
-      "type": 12,
-      "content": {
-        "version": "NotebookGroup/1.0",
-        "groupType": "editable",
-        "items": [
-          {
-            "type": 3,
-            "content": {
-              "version": "KqlItem/1.0",
-              "query": "// Define variables\r\n// Audit Log Classes - Dialog Logon Successful, RFC Logon Successful\r\nlet AuditClasses = dynamic(['AU1','AU5']);\r\n// Dialog / CPIC / RFC Int / RFC Ext / SRFC / User Switch / HTTP / Restore Session / API Call\r\nlet DialogLogonTypes = dynamic(['A', 'C', 'F', 'R', 'S', 'U', 'H', 'u', ' ']);\r\nlet excUsers = _GetWatchlist('SAP - Excluded Users'); // Users that should be removed from query\r\nlet fixedExcUsers = datatable(User:string)\r\n// Maintain these if WatchList is not available    \r\n    [\"SYSWF\"]\r\n; \r\nlet UnitedExcUsers =\r\ntoscalar(union excUsers, fixedExcUsers\r\n| summarize Users = make_set(User));\r\nlet IPThreshold = 1;\r\n// Query Logic\r\nABAPAuditLog_CL \r\n| where TimeGenerated {TimeSelect}\r\n| where (SystemID_s in ({Systems}) or  '*' in ({Systems})) \r\n| where MessageID_s in (AuditClasses)\r\n| where Variable1_s in (DialogLogonTypes)\r\n| where User_s !in (UnitedExcUsers)\r\n| summarize CountIP = dcount(TerminalIPv6_s), IPs = make_set(TerminalIPv6_s), StartTime = min(TimeGenerated), EndTime = max(TimeGenerated) by SystemID_s, ClientID_s, User_s, Email_s\r\n| where CountIP > IPThreshold // Count of IP logins from the user is higher than threshold\r\n| mv-expand IPs to typeof(string ) // Show for each IP\r\n| project SystemID_s, ClientID_s, User_s,\r\n    AccountCustomEntity = Email_s, IPCustomEntity = IPs, StartTime, EndTime\r\n| order by StartTime, EndTime desc",
-              "size": 0,
-              "title": "Multiple Logons by User",
-              "queryType": 0,
-              "resourceType": "microsoft.operationalinsights/workspaces",
-              "gridSettings": {
-                "formatters": [
-                  {
-                    "columnMatch": "User_s",
-                    "formatter": 18,
-                    "formatOptions": {
-                      "thresholdsOptions": "icons",
-                      "thresholdsGrid": [
-                        {
-                          "operator": "Default",
-                          "thresholdValue": null,
-                          "representation": "warning",
-                          "text": "{0}{1}"
-                        }
-                      ]
-                    }
-                  }
-                ]
-              }
-            },
-            "name": "query - 1"
-          },
-          {
-            "type": 3,
-            "content": {
-              "version": "KqlItem/1.0",
-              "query": "// Define variables\r\nlet AuditClasses = dynamic(['AU1', 'AU5']); // Audit Log Classes - Dialog Logon Successful, RFC Logon Successful\r\nlet DialogLogonTypes = dynamic(['A', 'C', 'F', 'R', 'S', 'U', 'H', 'u', ' ']); // Dialog / CPIC / RFC Int / RFC Ext / SRFC / User Switch / HTTP / Restore Session / API Call\r\nlet excNetworks = _GetWatchlist('SAP - Excluded Networks'); // Networks that should be removed from query\r\nlet fixedNetworks =\r\ndatatable(Network:string)\r\n// Maintain these if WatchList is not available    \r\n    [\"111.68.128.0/1\", \"123.68.128.0/1\"]\r\n; \r\nlet UnitedNetworks =\r\ntoscalar(union excNetworks, fixedNetworks\r\n| summarize Networks = make_set(Network));\r\nlet UsersperIP = 1;\r\n// Query logic\r\nABAPAuditLog_CL \r\n| where TimeGenerated {TimeSelect}\r\n| where (SystemID_s in ({Systems}) or  '*' in ({Systems})) \r\n| where MessageID_s in (AuditClasses)\r\n| where Variable1_s in (DialogLogonTypes)\r\n| where TerminalIPv6_s !in (UnitedNetworks)\r\n| extend UserandEmail = pack(\"ID\", User_s, \"Email\", Email_s)\r\n| summarize CountUsers = dcount(strcat(User_s, \"_&_\", Email_s)), Users = make_set(UserandEmail), StartTime = min(TimeGenerated), EndTime = max(TimeGenerated) \r\n    by SystemID_s, ClientID_s, TerminalIPv6_s\r\n| where CountUsers > UsersperIP\r\n| mv-expand Users \r\n| evaluate bag_unpack(Users, \"User_\")\r\n| project SystemID_s, ClientID_s, column_ifexists(\"User_ID\", \"\"), AccountCustomEntity = column_ifexists(\"User_Email\", \"\"), IPCustomEntity = TerminalIPv6_s, StartTime, EndTime\r\n| order by StartTime, EndTime desc\r\n",
-              "size": 0,
-              "title": "Multiple Logons by IP",
-              "queryType": 0,
-              "resourceType": "microsoft.operationalinsights/workspaces",
-              "visualization": "table",
-              "gridSettings": {
-                "formatters": [
-                  {
-                    "columnMatch": "IPCustomEntity",
-                    "formatter": 18,
-                    "formatOptions": {
-                      "thresholdsOptions": "icons",
-                      "thresholdsGrid": [
-                        {
-                          "operator": "Default",
-                          "thresholdValue": null,
-                          "representation": "warning",
-                          "text": "{0}{1}"
-                        }
-                      ]
-                    }
-                  }
-                ]
-              }
-            },
-            "name": "query - 6"
-          },
-          {
-            "type": 3,
-            "content": {
-              "version": "KqlItem/1.0",
-              "query": "// Define variables\r\n// Audit Log Classes - Failed Logons / Password Check\r\nlet AuditClasses = dynamic(['AUO', 'AU2', 'AU6', 'BU1']);\r\nlet perIPLimit = 6;\r\n// Query logic\r\nABAPAuditLog_CL \r\n| where TimeGenerated {TimeSelect}\r\n| where (SystemID_s in ({Systems}) or  '*' in ({Systems})) \r\n| where MessageID_s in (AuditClasses)\r\n| extend DetailsBy = pack(\"User\", User_s, \"Email\", Email_s, \"SystemID\", SystemID_s, \"ClientID\", ClientID_s)\r\n| summarize LoginbyIPAttempts = count(), Details = make_set(DetailsBy), StartTime = min(TimeGenerated), EndTime = max(TimeGenerated) \r\n    by TerminalIPv6_s\r\n// Check if number of login attempts per IP is higher than limit\r\n| where LoginbyIPAttempts > perIPLimit \r\n| mv-expand Details\r\n| evaluate bag_unpack(Details, \"Details_\")\r\n| project \r\n    StartTime, EndTime, IPCustomEntity = TerminalIPv6_s,\r\n    AccountCustomEntity = column_ifexists(\"Details_Email\", \"\"), column_ifexists(\"Details_User\", \"\"),\r\n    column_ifexists(\"Details_SystemID\", \"\"),\r\n    column_ifexists(\"Details_ClientID\", \"\")\r\n| summarize count() by Details_User",
-              "size": 0,
-              "title": "Brute force attacks by User",
-              "queryType": 0,
-              "resourceType": "microsoft.operationalinsights/workspaces",
-              "visualization": "barchart",
-              "chartSettings": {
-                "xAxis": "Details_User",
-                "yAxis": [
-                  "count_"
-                ],
-                "ySettings": {
-                  "numberFormatSettings": {
-                    "unit": 17,
-                    "options": {
-                      "style": "decimal",
-                      "useGrouping": true
-                    }
-                  },
-                  "max": 100
-                }
-              }
-            },
-            "name": "query - 2"
-          },
-          {
-            "type": 3,
-            "content": {
-              "version": "KqlItem/1.0",
-              "query": "let AuditClasses = dynamic(['AU1','AU5']); // Audit Log Classes - Dialog Logon Successful, RFC Logon Successful\r\n// Dialog / CPIC / RFC Int / RFC Ext / SRFC / User Switch / HTTP / Restore Session / API Call\r\nlet DialogLogonTypes = dynamic(['A', 'C', 'F', 'R', 'S', 'U', 'H', 'u', ' ']);\r\nlet Networks = _GetWatchlist('SAP - Networks'); \r\nlet fixedNetworks = datatable(Network: string)['111.68.128.0/17']; // Maintain these if watchlist is not available\r\nlet allNetworks = union Networks, fixedNetworks\r\n    | summarize by Network;\r\nABAPAuditLog_CL\r\n// Add audit classes\r\n| where TimeGenerated {TimeSelect}\r\n| where (SystemID_s in ({Systems}) or  '*' in ({Systems})) \r\n| where MessageID_s in (AuditClasses)\r\n| where Variable1_s in (DialogLogonTypes) // Is a dialog logon type from the list\r\n| where isnotempty(TerminalIPv6_s) // There is a Ipv6 address\r\n| evaluate ipv4_lookup(allNetworks, TerminalIPv6_s, Network, return_unmatched = true)\r\n// Similar to regular lookup, by ipv4 address, unmatched is like left join\r\n| where isempty(Network) // Network is not familiar\r\n// Details\r\n| project TimeGenerated, SystemID_s, ClientID_s, User_s, TransactionCode_s, MessageText_s, AccountCustomEntity = Email_s, IPCustomEntity = TerminalIPv6_s, HostCustomEntity = Host_s\r\n| summarize count() by IPCustomEntity",
-              "size": 0,
-              "title": "Logins by unexpected networks",
-              "queryType": 0,
-              "resourceType": "microsoft.operationalinsights/workspaces",
-              "visualization": "piechart"
-            },
-            "name": "query - 3"
-          },
-          {
-            "type": 3,
-            "content": {
-              "version": "KqlItem/1.0",
-              "query": "// Define Variables\r\nlet Role = 'Production';\r\nlet AuditClasses = dynamic(['AU3']); // Audit Log Classes - Transaction Started\r\nlet allSystemRoles = dynamic(['Sandbox','Developement','QualityAssurance','Training','Production']); // Available System Roles\r\nlet allSystemUsage = dynamic (['ERP','CRM','BW','Solman','Gateway','Enterprise Portal']); // Available System Usages\r\n// Get Relevant Systems from WatchList\r\nlet systemID = _GetWatchlist('SAP - Systems');\r\nlet fixedSID = datatable(SystemID:string, SystemRole:string, SystemUsage:string)\r\n// Maintain these if WatchList is not available    \r\n    [\"S4H\",\"Production\",\"ERP\",\r\n    \"XXX\",\"Sandbox\",\"BW\"]\r\n; \r\n// Get Relevant Transaction Codes\r\nlet SensitiveTcode = _GetWatchlist('SAP - Sensitive Transactions');\r\nlet fixedTcode = datatable(TransactionCode:string)\r\n// Maintain these if WatchList is not available    \r\n    [\"RSAU_CONFIG\",\"RZ11\",\"SM19\"]\r\n; \r\nlet UnitedCodes = \r\n    union SensitiveTcode, fixedTcode\r\n    | summarize by TransactionCode;\r\nlet UnitedSystem =\r\nunion systemID, fixedSID\r\n| summarize by SystemID, SystemRole, SystemUsage\r\n| where SystemRole == Role; // Recommended  is Production only\r\n//| where SystemRole in (allSystemRoles); // Use this for all system roles\r\n// Query logic\r\nABAPAuditLog_CL \r\n| where TimeGenerated {TimeSelect}\r\n| where (SystemID_s in ({Systems}) or  '*' in ({Systems})) \r\n| where MessageID_s in (AuditClasses)\r\n| where TransactionCode_s in (UnitedCodes)\r\n| project-rename SystemID = SystemID_s\r\n| lookup kind = inner (UnitedSystem) on SystemID\r\n| order by TimeGenerated asc\r\n| project TimeGenerated, SystemID, ClientID_s, User_s, TransactionCode_s, MessageText_s, MessageID_s, AccountCustomEntity = Email_s, IPCustomEntity = TerminalIPv6_s, HostCustomEntity = Host_s\r\n| summarize Number_Of_Transactions = count() by TransactionCode_s",
-              "size": 0,
-              "title": "Sensitive Transactions Executions",
-              "queryType": 0,
-              "resourceType": "microsoft.operationalinsights/workspaces",
-              "visualization": "categoricalbar"
-            },
-            "name": "query - 4"
-          },
-          {
-            "type": 3,
-            "content": {
-              "version": "KqlItem/1.0",
-              "query": "// Define Variables\r\nlet Role = \"Production\";\r\nlet AuditClasses = dynamic(['AUW']); // Audit Log Classes - Report Started\r\nlet allSystemRoles = dynamic(['Sandbox','Developement','QualityAssurance','Training','Production']); // Available System Roles\r\nlet allSystemUsage = dynamic (['ERP','CRM','BW','Solman','Gateway','Enterprise Portal']); // Available System Usages\r\n// Get Relevant Systems from WatchList\r\nlet systemID = _GetWatchlist('SAP - Systems');\r\nlet fixedSID = datatable(SystemID:string, SystemRole:string, SystemUsage:string)\r\n// Maintain these if WatchList is not available    \r\n    [\"S4H\",\"Production\",\"ERP\",\r\n    \"XXX\",\"Sandbox\",\"BW\"]\r\n; \r\n// Get Relevant ABAP Programs\r\nlet SensitiveABAPReports = _GetWatchlist('SAP - Sensitive ABAP Programs');\r\nlet fixedABAPReports = datatable(ABAPProgram:string)\r\n// Maintain these if WatchList is not available    \r\n    [\"RSPFLDOC\"]\r\n; \r\nlet UnionAbap = \r\n    union SensitiveABAPReports, fixedABAPReports\r\n    | summarize by ABAPProgram;\r\nlet UnitedSystem =\r\nunion systemID, fixedSID\r\n| summarize by SystemID, SystemRole, SystemUsage\r\n| where SystemRole == Role; // Reccommended is Production only\r\n//| where SystemRole in (allSystemRoles); // Use this for all system roles\r\n// Query logic\r\nABAPAuditLog_CL \r\n| where TimeGenerated {TimeSelect}\r\n| where (SystemID_s in ({Systems}) or  '*' in ({Systems})) \r\n| where MessageID_s in (AuditClasses)\r\n| where ABAPProgramName_s in (UnionAbap)\r\n| project-rename SystemID = SystemID_s\r\n| lookup kind = inner (UnitedSystem) on SystemID\r\n| order by TimeGenerated asc\r\n| project TimeGenerated, SystemID, ClientID_s, User_s, ABAPProgramName_s, MessageText_s, TransactionCode_s, MessageID_s, AccountCustomEntity = Email_s, IPCustomEntity = TerminalIPv6_s, HostCustomEntity = Host_s\r\n| summarize Number_Of_Programs = count() by ABAPProgramName_s",
-              "size": 0,
-              "title": "Sensitive ABAP Programs Executions",
-              "queryType": 0,
-              "resourceType": "microsoft.operationalinsights/workspaces",
-              "visualization": "categoricalbar"
-            },
-            "name": "query - 5"
-          },
-          {
-            "type": 3,
-            "content": {
-              "version": "KqlItem/1.0",
-              "query": "// Define Variables\r\nlet Roles = 'PFCG';\r\nlet UsersRoles = 'AGR_USERS';\r\nlet Insert = \"I\";\r\nlet logsThreshold = 10; // 10 seconds\r\n// Audit Log Classes - Authorizations for user changed\r\nlet AuditClasses = dynamic(['AUB', 'AUD']); // Authorizations for user &A changed.\r\n// Maintain these if WatchList is not available\r\nlet SensitiveRoles =  _GetWatchlist('SAP - Sensitive Roles');\r\nlet fixedRoles = datatable(Role: string)['SAP_BC_BASIS_ADMIN', 'SAP_BC_AUTH_PROFILE_ADMIN'];\r\n// Maintain these if System doesn't have CR's\r\nlet fixedChangeDocs = datatable(User_s : string, ObjectClass_s : string, TableName_s : string, TypeofChange_Item_s : string ,\r\nChangedTableKey_s : string, ObjectID_s : string, TimeGenerated : datetime, ValueNew_s : string, SystemID_s : string)[];\r\nlet ChangeDocs = \r\nunion isfuzzy=true table(\"ABAPChangeDocsLog_CL\"), fixedChangeDocs;\r\nlet ChangeCheck =\r\nChangeDocs  \r\n| where ObjectClass_s == Roles // Roles\r\n    and TableName_s == UsersRoles // Users Roles\r\n    and TypeofChange_Item_s == Insert // Insert \r\n| extend UserAssigned = extract(@\"^.{1,33}\\s*?(.{1,12})\\s*?\\d{16}\", 1, ChangedTableKey_s)\r\n| extend Role = ObjectID_s;\r\nlet UnitedRoles =\r\ntoscalar(union fixedRoles, SensitiveRoles\r\n| summarize Roles = make_list(Role));\r\n// Query logic\r\nABAPAuditLog_CL \r\n| where TimeGenerated {TimeSelect}\r\n| where (SystemID_s in ({Systems}) or  '*' in ({Systems})) \r\n| where MessageID_s in (AuditClasses)\r\n| summarize by TimeGenerated, TerminalIPv6_s, User_s, Host_s, Email_s\r\n| lookup kind = leftouter (ChangeCheck) on User_s\r\n| where Role in (UnitedRoles)\r\n| project-rename TimeGenAudit = TimeGenerated1\r\n| where abs(datetime_diff('second', TimeGenerated, TimeGenAudit)) <= logsThreshold\r\nor isnull(TimeGenAudit)\r\n| project \r\n    // Details\r\n    TimeGenerated, SystemID_s, ClientID_s, Role, User_s, UserAssigned",
-              "size": 1,
-              "title": "Sensitive Role Assignments",
-              "exportFieldName": "User_s",
-              "exportParameterName": "User",
-              "exportDefaultValue": "SAP",
-              "queryType": 0,
-              "resourceType": "microsoft.operationalinsights/workspaces",
-              "visualization": "table",
-              "gridSettings": {
-                "formatters": [
-                  {
-                    "columnMatch": "Role",
-                    "formatter": 18,
-                    "formatOptions": {
-                      "thresholdsOptions": "icons",
-                      "thresholdsGrid": [
-                        {
-                          "operator": "Default",
-                          "thresholdValue": null,
-                          "representation": "warning",
-                          "text": "{0}{1}"
-                        }
-                      ]
-                    }
-                  }
-                ]
-              }
-            },
-            "name": "query - 6"
-          },
-          {
-            "type": 3,
-            "content": {
-              "version": "KqlItem/1.0",
-              "query": "ABAPAuditLog_CL \r\n| where TimeGenerated {TimeSelect}\r\n| where (SystemID_s in ({Systems}) or  '*' in ({Systems})) \r\n| where User_s=='{User}'\r\n| order by TimeGenerated desc\r\n| project TimeGenerated, SystemID_s, ClientID_s, MessageID_s ,MessageClass_s, MessageText_s\r\n| take 20",
-              "size": 1,
-              "title": "Current Activity of Suspicious User: {User}",
-              "queryType": 0,
-              "resourceType": "microsoft.operationalinsights/workspaces"
-            },
-            "name": "query - 7"
-          }
-        ]
-      },
-      "conditionalVisibility": {
-        "parameterName": "workbook-param",
-        "comparison": "isEqualTo",
-        "value": "alerts"
-      },
-      "name": "Alertss"
     }
   ],
   "fallbackResourceIds": [
-    "/subscriptions/991af9ab-0e0d-4ebf-ab53-6c448bfecfff/resourcegroups/iprosis-s4h-12-05/providers/microsoft.operationalinsights/workspaces/or-log-analytics-workspace"
+    "/subscriptions/fdee8146-8bcf-460f-86f3-3f788c285efd/resourcegroups/iprosis/providers/microsoft.operationalinsights/workspaces/s4h-sentinel-development"
   ],
   "fromTemplateId": "sentinel-UserWorkbook",
   "$schema": "https://github.com/Microsoft/Application-Insights-Workbooks/blob/master/schema/workbook.json"
