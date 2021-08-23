@@ -1,6 +1,5 @@
 import create_template as ct
 import create_ui_definition as cud
-import import_from_sentinel as ifs
 import Alerts.fix_id_script as fis
 import shutil
 import os
@@ -10,17 +9,6 @@ from termcolor import colored
 directory = "Solution"
 zip_file_name = "sap1.2.20.zip"
 zip_file = os.getcwd() + "\\" + directory + "\\" + zip_file_name
-
-'''
-# Get Parameters From User
-print(colored("Please Enter Relevant Parameters to Import Alerts from Azure Sentinel Workspace.", "blue"))
-subscription = input("Please Enter Subscription: ")
-resource_group = input("Please Enter Resource Group: ")
-workspace = input("Please Enter Workspace: ")
-
-# Import Alerts from Azure Sentinel Workspace
-ifs.import_alerts(subscription, resource_group, workspace)
-'''
 
 print(colored("Starting to create Azure Sentinel SAP Solution.", "blue"))
 # Remove Alerts ID(Imported Workspace)
